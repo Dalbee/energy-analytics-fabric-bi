@@ -23,20 +23,19 @@ The solution is built around Microsoft Fabric, leveraging the following core cap
 
 ```mermaid
 flowchart LR
-    A[Source Systems<br/>API / CSV / Synthetic Data] --> B[Dataflow Gen2<br/>Ingestion]
-    B --> C[OneLake / Lakehouse<br/>Raw Zone]
-    C --> D[Notebook (PySpark)<br/>Transformations]
-    D --> E[Lakehouse<br/>Curated Zone]
-    E --> F[Semantic Model<br/>Power BI Dataset]
-    F --> G[Power BI Report<br/>Dashboards]
+    A[Source Systems: API / CSV / Synthetic Data] --> B[Dataflow Gen2 Ingestion]
+    B --> C[OneLake / Lakehouse Raw Zone]
+    C --> D[Notebook (PySpark) Transformations]
+    D --> E[Lakehouse Curated Zone]
+    E --> F[Semantic Model (Power BI Dataset)]
+    F --> G[Power BI Report / Dashboards]
     G --> H[Business Users]
 
     subgraph Deployment
         X[Git Repository] --> Y[Deployment Pipeline]
         Y --> F
         Y --> G
-    end
-```
+    end```
 ---
 
 ## 3. Storage Layers
