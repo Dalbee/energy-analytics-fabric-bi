@@ -41,7 +41,6 @@ This framework ensures Fabric remains compliant, scalable, and consistent across
         Y --> E
     end
 ```
-
 ---
 
 ## 3. Governance Components
