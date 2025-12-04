@@ -35,7 +35,9 @@ flowchart LR
         X[Git Repository] --> Y[Deployment Pipeline]
         Y --> F
         Y --> G
-    end```
+    end
+    
+```
 ---
 
 ## 3. Storage Layers
