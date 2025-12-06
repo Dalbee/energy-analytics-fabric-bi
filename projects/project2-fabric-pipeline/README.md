@@ -108,6 +108,7 @@ A Fabric Pipeline automates:
 
 ### **Step 4 — Reporting (Power BI)**  
 The semantic model powers dashboards created in **Project 1**.
+(The semantic model built in Project 1 consumes the curated Delta tables.)
 
 ### **Step 5 — CI/CD (GitHub)**  
 GitHub Actions validate:
