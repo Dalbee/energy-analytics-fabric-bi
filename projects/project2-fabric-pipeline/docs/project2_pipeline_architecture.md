@@ -1,24 +1,24 @@
 # Project 2: Fabric Pipeline Architecture (End-to-End Data Engineering)
 
-This document outlines the end-to-end architecture for ingesting, transforming, and publishing analytics-ready data using Microsoft Fabric. It represents a production-aligned pattern suitable for enterprise energy analytics.
+This document outlines the end-to-end data engineering architecture implemented in **Project 2** using Microsoft Fabric.  
+It describes how raw energy datasets are transformed into curated, analytics-ready Delta tables using PySpark and Fabric Pipelines.
+
+The architecture reflects a **production-aligned data engineering pattern** suitable for enterprise energy analytics.
+
+---
 
 ## 1. Purpose
 
 The pipeline is designed to:
 
-- Ingest raw operational datasets for energy production, heating, and emissions
-
-- Store raw data in an immutable Lakehouse Raw Zone
-
+- Ingest operational datasets for energy production, district heating, and CO₂ emissions
+- Store source data in a Lakehouse using Delta format
 - Perform validated, scalable PySpark transformations
+- Produce curated, analytics-ready Delta tables
+- Enforce basic data quality checks through pipeline validation
+- Provide a clean data engineering foundation for downstream analytics
 
-- Produce curated Delta tables for reporting
-
-- Trigger semantic model refreshes
-
-- Provide a blueprint for DevOps-driven Fabric workflows
-
-This directly supports Fortum’s goal of creating reusable, governed data products.
+This architecture supports the creation of reusable, governed data products for energy analytics use cases.
 
 ---
 
@@ -26,149 +26,124 @@ This directly supports Fortum’s goal of creating reusable, governed data produ
 
 ```mermaid
 flowchart TD
-    A[Dataflow Gen2<br/>Ingestion] --> B[Lakehouse Raw Zone]
-    B --> C[PySpark Notebook<br/>Transformations]
-    C --> D[Lakehouse Curated Zone]
-    D --> E[Semantic Model<br/>EnergyAnalyticsModel]
-    E --> F[Power BI Dashboards]
+    A[CSV Files in Lakehouse Files] --> B[Lakehouse Tables]
+    B --> C[PySpark Transformation Notebook]
+    C --> D[Curated Delta Tables]
+    D --> E[Validation Notebook]
 
-    subgraph Pipeline
-        A
+    subgraph Fabric Pipeline
         C
         E
     end
-
-    subgraph Git_Integration
-        G[GitHub Repo] --> H[Fabric Workspace]
-    end
 ```
-
 ---
 
 ## 3. Components Overview
-### 3.1 Dataflow Gen2 (Ingestion Layer)
 
-- Loads CSV files into Raw Zone
+### 3.1 Lakehouse (Raw & Curated Tables)
 
-- Handles schema enforcement
+- Stores data in Delta format
+- Supports ACID transactions and schema evolution
+- Separates raw source data from curated analytics tables
+- Acts as the single source of truth for downstream analytics
 
-- Can be replaced by API or event streaming later
+---
 
-### 3.2 Lakehouse Raw Zone
+### 3.2 PySpark Transformation Notebook
 
-- Stores raw, unmodified Delta tables
+- Cleans and standardises raw datasets
+- Creates authoritative dimension tables (`dimdate`, `dimplant`)
+- Enriches plant data with installed capacity and commissioning year
+- Joins fact and dimension data
+- Computes business KPIs upstream in Spark
+- Writes curated Delta tables to the Lakehouse
 
-- Enables auditability and reprocessing
+All transformations are deterministic, idempotent, and safe to run repeatedly.
 
-- Acts as single source of truth for ingestion
+---
 
-### 3.3 PySpark Transformation Notebook
+### 3.3 Lakehouse Curated Zone
 
-- Cleans and standardises raw tables
+- Contains domain-ready Delta tables
+- Optimised for analytics and reporting
+- Clear separation between ingestion logic and business logic
+- Designed for consumption by Power BI semantic models (Project 1)
 
-- Joins DimDate and DimPlant
+---
 
-- Computes CO₂ intensity & heating balance
+### 3.4 Validation Notebook
 
-- Writes optimised curated tables
+- Verifies curated tables exist
+- Ensures datasets are non-empty
+- Acts as a quality gate in the pipeline
+- Prevents downstream consumption of incomplete or invalid data
 
-### 3.4 Lakehouse Curated Zone
+---
 
-- Domain-ready Delta tables
+### 3.5 Fabric Pipeline
 
-- Supports semantic model consumption
-
-- Clear separation between ingestion and business logic
-
-### 3.5 Semantic Model
-
-- Direct Lake or Import
-
-- Contains enterprise KPIs
-
-- Used by Power BI dashboards
-
-### 3.6 Fabric Pipeline
-
-- Orchestrates ingestion → transformation → model refresh
-
-- Provides monitoring and scheduling
+- Orchestrates notebook execution in sequence
+- Runs transformation logic first
+- Executes validation checks after transformations
+- Provides monitoring, logging, and scheduling
 
 ---
 
 ## 4. Process Flow
 
-- Dataflow Gen2 loads CSVs into ```raw.*``` tables
-
-- Notebook reads raw tables, validates data, applies transformations
-
-- Notebook writes curated tables into ```curated.*```
-
-- Pipeline triggers semantic model refresh
-
-- Power BI dashboards update automatically
-
-- All assets tracked in GitHub for version control
+- CSV files are uploaded to Lakehouse Files
+- Lakehouse tables are created and maintained in Delta format
+- Transformation notebook reads Lakehouse tables and applies business logic
+- Curated tables are written back to the Lakehouse
+- Validation notebook confirms data quality
+- Pipeline completes only if all validation checks succeed
 
 ---
 
 ## 5. Best Practices Applied
 
 - Raw → Curated separation
-
-- Delta format for performance & ACID guarantees
-
-- Time-series optimisations for energy data
-
-- Reusable DimDate & DimPlant
-
-- Notebook modularity and code clarity
-
-- Naming conventions aligned with enterprise standards
-
-- Lineage visibility across the stack
+- Delta Lake for reliability and performance
+- Upstream KPI computation in Spark
+- Dimensional modeling for analytics
+- Clear notebook structure and modular logic
+- Pipeline-based orchestration
+- Data quality enforcement before analytics consumption
 
 ---
 
 ## 6. Security & Access Control
 
-- Workspace-level roles limit access to raw/curated zones
-
-- Sensitive emission tables governed via RLS in semantic model
-
-- Git-backed audit trail for all changes
-
-- Controlled deployment of pipelines
+- Workspace-level roles restrict access to Lakehouse assets
+- Raw and curated tables can be governed independently
+- Downstream security (e.g. RLS) applied at semantic model level (Project 1)
 
 ---
 
-## 7. Deployment Approach
+## 7. Scope Clarification
 
-- Fabric Git Integration links workspace to GitHub
+This project focuses **exclusively on data engineering**.
 
-- Notebook, Dataflows, Pipelines synchronised via Git
+The following are intentionally **out of scope for Project 2**:
 
-- CI/CD pipelines automate semantic model validation
+- Semantic model refresh orchestration
+- CI/CD automation
+- Deployment Pipelines (Dev → Test → Prod)
 
-- Deployment Pipelines simulate Dev → Test → Prod
-
-- Versioning ensures safe rollbacks
+These capabilities are handled in separate projects to maintain a clean separation of concerns.
 
 ---
 
 ## 8. Summary
 
-Project 2 provides a complete, production-aligned data engineering workflow for Microsoft Fabric.
+Project 2 delivers a complete, production-aligned **Microsoft Fabric data engineering pipeline**.
+
 It demonstrates:
 
-- Data ingestion
+- Lakehouse-based data engineering
+- PySpark transformations and KPI computation
+- Dimensional modeling
+- Pipeline orchestration
+- Built-in data validation
 
-- Transformation engineering
-
-- Lakehouse modelling
-
-- Orchestration
-
-- CI/CD readiness
-
-This is the foundation of a scalable analytics platform.
+This project forms the **data engineering backbone** of the Energy Analytics Platform and directly supports downstream semantic modeling and reporting.
