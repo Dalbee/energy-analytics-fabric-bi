@@ -193,6 +193,8 @@ The Fabric Pipeline (`pl_energy_analytics_ingestion`) orchestrates the data engi
 
 This design enforces a clean separation between transformation logic and validation logic.
 
+_**The pipeline specification is documented in ```pipeline_spec.yaml``` as an architectural reference and is not executed directly.**_
+
 ---
 
 ## 8. Validation Strategy
