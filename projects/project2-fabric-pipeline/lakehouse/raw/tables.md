@@ -1,10 +1,11 @@
 # Raw Lakehouse Tables
 
-- raw.FactEnergyProduction
-- raw.FactDistrictHeating
-- raw.FactCO2Emissions
-- raw.DimDate
-- raw.DimPlant
+The following tables represent raw or lightly processed inputs used by the
+Fabric pipeline.
 
-All raw tables are direct landings from ingestion (Dataflow Gen2 or copy activity),
-with minimal or no transformation applied.
+- factenergydaily
+- factheatingdaily
+- factco2daily
+
+These tables are ingested from CSV files and stored in Delta format with minimal
+transformation applied.

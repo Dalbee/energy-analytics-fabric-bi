@@ -1,38 +1,27 @@
 {
-  "name": "ETL Energy Pipeline",
-  "description": "End-to-end ingestion and transformation pipeline for energy analytics.",
+  "name": "ETL Energy Analytics Pipeline",
+  "description": "Fabric pipeline orchestrating PySpark-based transformations, KPI computation, and data validation for the Energy Analytics Lakehouse.",
   "activities": [
     {
-      "name": "Run Dataflow Ingestion",
-      "type": "Dataflow",
-      "dataflowName": "Energy Ingestion Dataflow",
+      "name": "Run Energy Transformations",
+      "type": "Notebook",
+      "notebookName": "nb_transform_energy_data",
       "dependsOn": []
     },
     {
-      "name": "Run PySpark Transformation",
+      "name": "Validate Curated Tables",
       "type": "Notebook",
-      "notebookName": "transform_energy_data",
+      "notebookName": "nb_validate_energy_tables",
       "dependsOn": [
         {
-          "activity": "Run Dataflow Ingestion",
-          "condition": "Succeeded"
-        }
-      ]
-    },
-    {
-      "name": "Refresh Semantic Model",
-      "type": "PowerBIRefresh",
-      "datasetName": "EnergyAnalyticsModel",
-      "dependsOn": [
-        {
-          "activity": "Run PySpark Transformation",
+          "activity": "Run Energy Transformations",
           "condition": "Succeeded"
         }
       ]
     }
   ],
   "schedule": {
-    "frequency": "Day",
+    "frequency": "Daily",
     "time": "02:00"
   }
 }

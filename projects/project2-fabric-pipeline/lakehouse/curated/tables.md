@@ -1,10 +1,13 @@
 # Curated Lakehouse Tables
 
-- curated.FactEnergyDaily
-- curated.FactHeatingDaily
-- curated.FactCO2Daily
-- curated.DimDate
-- curated.DimPlant
+- dimdate
+- dimplant
+- factenergydaily
+- factheatingdaily
+- factco2daily
+- fact_energy_kpi_daily
+- fact_heating_kpi_daily
+- fact_heating_emissions_daily
 
-Curated tables are cleaned, conformed, and optimised for consumption by semantic
-models and Power BI reports.
+Curated tables are enriched, conformed, and optimized for analytics and Power BI
+consumption. All business KPIs are computed upstream in Spark.

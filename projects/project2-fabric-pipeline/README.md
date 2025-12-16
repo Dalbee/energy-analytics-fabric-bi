@@ -1,7 +1,8 @@
 # Project 2 — Microsoft Fabric Data Engineering Pipeline
 
-This project implements an end-to-end data engineering workflow using **Microsoft Fabric**, including ingestion, transformation, Lakehouse modelling, orchestration, and CI/CD validation.  
-It demonstrates how enterprise teams can build scalable, governed data pipelines to support analytics and reporting.
+This project implements an end-to-end **data engineering workflow using Microsoft Fabric**, covering Lakehouse-based ingestion, PySpark transformations, dimensional modeling, data quality validation, and pipeline orchestration.
+
+The project demonstrates how a Fabric-based data platform can be structured to support reliable analytics and reporting in an energy-sector context, with all business KPIs computed upstream in Spark.
 
 ---
 
@@ -9,162 +10,238 @@ It demonstrates how enterprise teams can build scalable, governed data pipelines
 
 The purpose of this project is to:
 
-- Ingest operational energy datasets (production, heating, emissions)
-- Store them in a structured Lakehouse Raw Zone
-- Transform them into curated, analysis-ready Delta tables
-- Automate the workflow with Fabric Pipelines
-- Refresh semantic models used by Power BI
-- Validate all assets through GitHub CI/CD
+- Ingest operational energy datasets (production, district heating, CO₂ emissions)
+- Store source data in a Microsoft Fabric Lakehouse
+- Transform raw data into curated, analysis-ready Delta tables
+- Apply a dimensional (star-schema-oriented) data model
+- Compute business KPIs upstream in PySpark
+- Orchestrate transformations and validation using Fabric Pipelines
+- Prepare clean, reliable data for Power BI semantic models (Project 1)
 
-This aligns with enterprise-level data engineering practices expected for a **Tech Lead** role.
+This reflects enterprise-grade data engineering practices expected for a **senior / Tech Lead–level role**.
 
 ---
 
 ## 2. Architecture Overview
 
-The pipeline consists of:
+The solution follows a modern **Microsoft Fabric Lakehouse architecture**:
 
-- **Dataflow Gen2** for ingestion  
-- **Lakehouse Raw Zone** for immutable staging  
-- **PySpark Notebook** for business transformations  
-- **Lakehouse Curated Zone** for cleaned and conformed Delta tables  
-- **Fabric Pipeline** orchestrating the workflow  
-- **Semantic Model** consumed by Power BI dashboards  
-- **GitHub CI/CD** for validation and governance  
+- CSV source files stored in Lakehouse Files
+- Delta tables created and managed in the Lakehouse
+- PySpark notebooks for transformation and KPI computation
+- A validation notebook enforcing data quality checks
+- A Fabric Pipeline orchestrating notebook execution
+- Power BI semantic models consuming curated tables (Project 1)
 
-### High-Level Diagram
+### High-Level Architecture
 
 ```mermaid
 flowchart TD
-    A[Dataflow Gen2<br/>Ingestion] --> B[Lakehouse Raw Zone]
-    B --> C[PySpark Notebook<br/>Transformations]
-    C --> D[Lakehouse Curated Zone]
-    D --> E[Semantic Model]
-    E --> F[Power BI Dashboards]
-
-    subgraph Pipeline
-        A
-        C
-        E
-    end
+    A[CSV Source Files] --> B[Lakehouse Files]
+    B --> C[Transformation Notebook]
+    C --> D[Curated Delta Tables]
+    D --> E[Validation Notebook]
+    E --> F[Power BI Semantic Model]
 ```
+---
+
+## 3. Key Artifacts
+| Component               | Name / Location                          |
+| ----------------------- | ---------------------------------------- |
+| Lakehouse               | `lh_energy_analytics`                    |
+| Transformation notebook | `notebooks/transform_energy_data.py`     |
+| Validation notebook     | Executed via Fabric Pipeline             |
+| Fabric pipeline         | `pl_energy_analytics_ingestion`          |
+| Pipeline definition     | `pipelines/etl_energy_pipeline.json`     |
+| Curated tables          | Lakehouse curated layer                  |
+| Architecture docs       | `docs/project2_pipeline_architecture.md` |
+
 
 ---
 
-## 3. Key Files in This Project
+## 4. Data Model (Curated Layer)
 
-| Component | File Path |
-|----------|-----------|
-| Pipeline JSON (ETL orchestration) | `/pipelines/etl_energy_pipeline.json` |
-| PySpark transformation notebook | `/notebooks/transform_energy_data.py` |
-| Raw & curated Lakehouse definitions | `/lakehouse/raw/` & `/lakehouse/curated/` |
-| Architecture documentation | `/docs/project2_pipeline_architecture.md` |
-| CI/CD documentation | `/docs/cicd_integration.md` |
-| GitHub Actions workflow | `.github/workflows/fabric_ci.yml` |
+The curated layer follows a **star-schema-inspired design** suitable for analytics and reporting.
 
-These files demonstrate engineering capability, documentation maturity, and DevOps readiness.
+### Dimension Tables
 
----
+#### **dimdate**
+- date  
+- year  
+- quarter  
+- month  
+- day  
+- day_of_week  
 
-## 4. How the Pipeline Works
+#### **dimplant**
+- plant_id  
+- plant_name  
+- energy_source  
+- installed_capacity_mw  
+- commissioning_year  
 
-### **Step 1 — Ingestion (Dataflow Gen2)**  
-The Dataflow loads CSV files into raw Delta tables:
-
-- raw.FactEnergyProduction
-- raw.FactDistrictHeating
-- raw.FactCO2Emissions
-- raw.DimDate
-- raw.DimPlant
-
-
-### **Step 2 — Transformation (PySpark Notebook)**  
-The notebook performs:
-
-- Type cleanup and schema standardisation  
-- Joining raw tables with DimDate and DimPlant  
-- Creating CO₂ intensity metric  
-- Calculating heating balance  
-- Adding renewable energy flags  
-- Writing curated Delta tables
-
-**Resulting Curated Tables**
-- curated.FactEnergyDaily  
-- curated.FactHeatingDaily  
-- curated.FactCO2Daily  
-- curated.DimDate  
-- curated.DimPlant  
-
-
-
-### **Step 3 — Orchestration (Fabric Pipeline)**
-
-A Fabric Pipeline automates:
-
-1. Running the ingestion Dataflow  
-2. Executing the transformation notebook 
-3. Refreshing the semantic model 
- 
-
-### **Step 4 — Reporting (Power BI)**  
-The semantic model powers dashboards created in **Project 1**.
-(The semantic model built in Project 1 consumes the curated Delta tables.)
-
-### **Step 5 — CI/CD (GitHub)**  
-GitHub Actions validate:
-
-- JSON structure  
-- YAML formatting  
-- Python notebook syntax  
-
-before merging to `main`.
+The `dimplant` dimension is enriched using reference capacity data to enable capacity, utilization, and sustainability KPIs.
 
 ---
 
-## 5. Skills Demonstrated
+### Fact Tables
 
-### **Data Engineering**
-- Lakehouse design  
-- Delta Lake operations  
-- Scalable PySpark transformations  
-- Schema and data quality enforcement  
+#### **factenergydaily**
+- date  
+- plant_id  
+- mwh_produced  
 
-### **Platform Engineering**
-- Fabric Pipelines  
-- Dataflow Gen2 ingestion  
-- Workspace structuring  
+#### **factheatingdaily**
+- date  
+- plant_id  
+- heating_produced_mwh  
+- heating_consumed_mwh  
 
-### **DevOps**
-- GitHub CI workflows  
-- Validation of artifacts  
-- Promotion readiness  
+#### **factco2daily**
+- date  
+- plant_id  
+- co2_kg  
 
-### **Architecture & Documentation**
-- Enterprise-standard diagrams  
-- Clear modeling principles  
-- Tech Lead communication  
+#### **fact_energy_kpi_daily**
 
----
+- Production metrics enriched with capacity and renewable attributes
 
-## 6. Value for Enterprise (e.g., Fortum)
+#### **fact_heating_kpi_daily**
 
-This data engineering pipeline enables:
+- Heating balance and operational KPIs
 
-- Full traceability from raw data to curated outputs  
-- Production-ready ingestion and transformation logic  
-- Governance through CI/CD and Git integration  
-- Reusable data assets for analytics teams  
-- Reliable refreshes powering business-critical dashboards  
+#### **fact_heating_emissions_daily**
+- date  
+- plant_id  
+- heating_produced_mwh  
+- co2_kg  
+- co2_kg_per_mwh_heat  
 
-The pipeline provides Traceability from raw ingestion to curated outputs, A repeatable and extensible transformation framework, Automated refresh processes, Early validation of repository changes, and Clean segregation between ingestion, transformation, and consumption layers.
+All fact tables join to `dimdate` and `dimplant` to support time-based, asset-based, and sustainability analysis.
 
 ---
 
-## 7. Summary
+## 5. Transformation Logic (PySpark)
 
-Project 2 represents a complete and realistic Fabric data engineering workflow.  
-It showcases ingestion, transformation, orchestration, DevOps integration, and documentation—forming the backbone of a scalable analytics platform for an energy organisation.
+All transformations are implemented in **PySpark** within the transformation notebook.
 
-Together with Projects 1 and 3, it forms a full, end-to-end solution. It forms a key part of the overall analytics platform, complementing the semantic modeling in Project 1 and the governance framework in Project 3.
+The transformation logic is responsible for:
+
+- Standardising data types (dates, numeric fields)
+- Creating authoritative dimension tables
+- Enriching `dimplant` with installed capacity and commissioning year
+- Joining fact and dimension data
+- Computing business KPIs upstream in Spark
+- Writing curated Delta tables to the Lakehouse
+
+Transformations are designed to be:
+
+- Deterministic  
+- Idempotent  
+- Safe to execute repeatedly within a Fabric Pipeline  
+
+---
+
+## 6. Business KPIs Computed in Spark
+
+All major business KPIs are computed **upstream in Spark**, minimizing the need for complex DAX in Power BI.
+
+### Electricity KPIs
+
+- Theoretical maximum MWh per day  
+  (`installed_capacity_mw × 24`)
+- Load factor  
+- Capacity utilization percentage  
+- Unused capacity (MWh)  
+- Renewable vs non-renewable energy production  
+- Renewable energy percentage  
+
+---
+
+### District Heating KPIs
+
+- Heating produced vs consumed  
+- Heating balance (loss / surplus)  
+
+---
+
+### CO₂ & Sustainability KPIs
+
+- Plant-level CO₂ emissions  
+- CO₂ intensity per MWh of heat (`kg CO₂ / MWh`)  
+- Renewable energy attribution  
+
+These KPIs enable sustainability and efficiency reporting without complex downstream calculations.
+
+---
+
+## 7. Pipeline Design
+
+The Fabric Pipeline (`pl_energy_analytics_ingestion`) orchestrates the data engineering workflow.
+
+### Pipeline Activities
+
+1. **Transform energy data**
+   - Executes the PySpark transformation notebook
+   - Creates and updates curated Delta tables
+   - Applies controlled schema evolution
+
+2. **Validate curated tables**
+   - Confirms all curated tables exist
+   - Verifies row counts are greater than zero
+   - Acts as a quality gate before analytics consumption
+
+This design enforces a clean separation between transformation logic and validation logic.
+
+---
+
+## 8. Validation Strategy
+
+A dedicated validation notebook enforces lightweight but effective data quality checks:
+
+- Table existence validation  
+- Non-empty dataset checks  
+- Pipeline failure on validation errors  
+
+Validation is executed as part of the Fabric Pipeline, preventing incomplete or corrupted data from reaching analytics consumers.
+
+---
+
+## 9. Integration with Power BI
+
+The curated Delta tables produced by this project are consumed by Power BI semantic models implemented in **Project 1**.
+
+This project provides the **data engineering foundation** that supports:
+
+- Clean semantic modeling  
+- Simplified DAX  
+- Reliable dashboard refreshes  
+- Scalable analytics development  
+
+---
+
+## 10. What This Project Demonstrates
+
+- Microsoft Fabric Lakehouse design  
+- PySpark-based data transformations  
+- Dimensional modeling for analytics  
+- Business KPI computation upstream in Spark  
+- Pipeline-based orchestration  
+- Built-in data quality validation  
+- Clear separation between engineering and analytics layers  
+
+---
+
+## 11. Status
+
+**Project status:** Complete
+
+All notebooks and pipelines execute successfully.  
+Curated tables are available for reporting and analytics.
+
+This project represents the **data engineering backbone** of the overall Energy Analytics Platform, complementing:
+
+- **Project 1** — Power BI semantic modeling & dashboards  
+- **Project 3** — Governance and CI/CD strategy
 
 

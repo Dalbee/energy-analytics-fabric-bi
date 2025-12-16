@@ -1,0 +1,6 @@
+plant_id,installed_capacity_mw,commissioning_year,plant_type
+PL01,120,2012,Wind
+PL02,60,2018,Solar
+PL03,150,2008,Biomass
+PL04,200,2010,Nuclear
+PL05,85,2015,Hydro
