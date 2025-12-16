@@ -1,37 +1,46 @@
 pipeline:
-  name: "ETL Energy Pipeline"
+  name: "ETL Energy Analytics Pipeline"
   purpose: >
-    Orchestrates ingestion, transformation, and semantic model refresh for
-    the Energy BI solution using Microsoft Fabric.
+    Orchestrates PySpark-based transformations, KPI computation,
+    and data quality validation for the Energy Analytics Lakehouse
+    using Microsoft Fabric.
+
   schedule:
     frequency: "Daily"
     time_utc: "02:00"
+
   steps:
     - order: 1
-      name: "Run Dataflow Ingestion"
-      type: "Dataflow Gen2"
-      description: "Loads raw CSV data into Lakehouse raw tables."
-      produces:
-        - "raw.FactEnergyProduction"
-        - "raw.FactDistrictHeating"
-        - "raw.FactCO2Emissions"
-        - "raw.DimDate"
-        - "raw.DimPlant"
-    - order: 2
-      name: "Run PySpark Transformation"
+      name: "Run Energy Transformations"
       type: "Notebook"
-      notebook: "transform_energy_data"
+      notebook: "nb_transform_energy_data"
       description: >
-        Joins raw tables with DimDate/DimPlant and writes curated Delta tables,
-        including calculated CO2 intensity and heating balance.
+        Reads Lakehouse tables, applies standardisation,
+        builds dimension tables, computes business KPIs,
+        and writes curated Delta tables for analytics.
       produces:
-        - "curated.FactEnergyDaily"
-        - "curated.FactHeatingDaily"
-        - "curated.FactCO2Daily"
-        - "curated.DimDate"
-        - "curated.DimPlant"
-    - order: 3
-      name: "Refresh Semantic Model"
-      type: "Power BI Dataset Refresh"
-      dataset: "EnergyAnalyticsModel"
-      description: "Refreshes the Power BI model against curated Lakehouse tables."
+        - "dimdate"
+        - "dimplant"
+        - "factenergydaily"
+        - "factheatingdaily"
+        - "factco2daily"
+        - "fact_energy_kpi_daily"
+        - "fact_heating_kpi_daily"
+        - "fact_heating_emissions_daily"
+
+    - order: 2
+      name: "Validate Curated Tables"
+      type: "Notebook"
+      notebook: "nb_validate_energy_tables"
+      description: >
+        Performs data quality checks to ensure curated tables
+        exist and contain data. Pipeline fails on validation errors.
+      validates:
+        - "dimdate"
+        - "dimplant"
+        - "factenergydaily"
+        - "factheatingdaily"
+        - "factco2daily"
+        - "fact_energy_kpi_daily"
+        - "fact_heating_kpi_daily"
+        - "fact_heating_emissions_daily"
