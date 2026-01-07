@@ -50,17 +50,21 @@ The project includes sample datasets, semantic model documentation, and a Power 
 
 ---
 
-## Project 2 — End-to-End Fabric Pipeline
+## Project 2 — Microsoft Fabric Data Engineering Pipeline
 
-An end-to-end hybrid ingestion and transformation pipeline demonstrating:
+This project implements an end-to-end **data engineering workflow using Microsoft Fabric**, providing the foundation for reliable analytics and reporting in an energy-sector context.  
 
-- Dataflow Gen2 ingestion
-- Lakehouse storage and optimisation
-- Notebook-based transformations (PySpark)
-- Automated pipelines with dependencies
-- Deployment pipeline structure for Dev → Test → Prod
+The workflow covers:
 
-Artifacts include pipeline JSON, notebook templates, dataflow definitions, and architecture documentation.
+- **Lakehouse-based ingestion** of operational energy datasets (production, district heating, CO₂ emissions)  
+- **PySpark-based transformations** and KPI computation  
+- **Dimensional modeling** with star-schema-inspired curated tables  
+- **Data quality validation** through dedicated notebooks  
+- **Pipeline orchestration** to automate the end-to-end workflow  
+- **Preparation of clean, analysis-ready datasets** for consumption by Power BI semantic models (Project 1)  
+
+Artifacts include transformation and validation notebooks, pipeline definitions, curated Delta tables, and architecture documentation. This project reflects enterprise-grade data engineering practices suitable for a **Senior / Tech Lead–level role**.
+
 
 ---
 
