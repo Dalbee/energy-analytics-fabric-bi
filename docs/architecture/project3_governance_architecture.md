@@ -131,14 +131,16 @@ dim_date
 dim_plant
 ```
 
-### 6.3. 3. Recommended Approach
+### 6.3. Recommended Approach
 
 Two options for naming tables: 
+
 
 **Option A — Project implied by schema (simpler)**
 
 Schema: `Energy-Analytics.dbo`
-<prefix>_<subject>_<grain>
+
+`<prefix>_<subject>_<grain>`
 
 Examples:
 ```
@@ -147,6 +149,7 @@ fact_heating_emissions_daily
 dim_date
 dim_plant
 ```
+
 
 **Option B — Project included in table name (stricter governance)**
 
