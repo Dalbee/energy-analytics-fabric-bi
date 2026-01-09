@@ -82,15 +82,33 @@ This approach:
 
 ## 5. Security Model
 
-Security is enforced using Microsoft Fabric’s native capabilities.
+The platform implements a multi-layered security strategy to ensure the "Principle of Least Privilege" across the Medallion architecture.
 
-### Row-Level Security (RLS)
-- Ensures users only see data for plants they are authorized to access  
-- Implemented at the semantic model level  
+### 5.1 Data Access by Zone
 
-### Object-Level Security (OLS)
-- Hides sensitive columns such as financial or emissions metrics  
-- Protects commercially sensitive data  
+- **Raw Zone (Bronze):** Restricted exclusively to Data Engineering and Platform Admins to maintain data integrity.
+
+- **Curated Zone (Gold):** Accessible to Data Analysts for ad-hoc SQL discovery and cross-functional validation via the SQL Analytics Endpoint.
+
+- **Semantic Layer:** The primary entry point for business users, fully governed by Row-Level Security (RLS).
+
+### 5.2 Row-Level Security (RLS) Implementation
+
+Access is filtered dynamically based on the user's organizational role:
+
+- **Plant-Level Filtering:** Plant Managers only see operational data for their specific sites.
+
+- **Region-Level Filtering:** Regional Directors see aggregated metrics for their geographic area.
+
+- **Role-Based Access:** Managed via Active Directory (AD) groups for seamless onboarding and offboarding.
+
+### 5.3 Sensitive Data and Compliance
+
+- **Confidentiality:** Emissions and financial data are classified as confidential; **Object-Level Security (OLS)** is used to hide specific columns from unauthorized viewers.
+
+**Data Privacy:** No PII (Personally Identifiable Information) is stored within the Lakehouse.
+
+**Auditability:** All access to the Production workspace is logged via Fabric's audit logs to meet energy-sector regulatory standards.
 
 ---
 

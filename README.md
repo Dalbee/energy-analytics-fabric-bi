@@ -72,7 +72,7 @@ An end-to-end data engineering workflow using **PySpark** and **Medallion Archit
 
 ---
 
-### [Project 3: Fabric Governance, Security and CI/CD Framework](./projects/project3-governance-cicd/docs/project3_governance_framework.md)
+### [Project 3: Fabric Governance, Security and CI/CD Framework](./projects/project3-governance-cicd/project3_governance_framework.md)
 
 Illustrates enterprise management of Fabric: Workspace strategy (Dev/Test/Prod), **RLS/OLS** security models, and **CI/CD** using deployment pipelines and Git integration.
 
@@ -85,9 +85,9 @@ All architecture, governance, and design materials are located in [/docs](./docs
 Key documents include:
 
 - [Fabric architecture diagrams](./docs/architecture/overall_fabric_architecture.md)
-- [Security and access models](./docs/architecture/project2_pipeline_architecture.md#6-governance-and-security)
-- [Naming standard](./docs/architecture/project3_governance_architecture.md#62-naming-convention)
-- [CI/CD process documentation](./docs/architecture/project3_governance_architecture.md)
+- [Security and access models](./docs/architecture/project3_governance_architecture.md#5-security-model)
+- [Naming standard](./docs/architecture/project3_governance_architecture.md#6-governance-standards)
+- [CI/CD process documentation](./docs/architecture/project3_governance_architecture.md#8-cicd--deployment-process)
 
 These documents are written to reflect enterprise standards.
 
