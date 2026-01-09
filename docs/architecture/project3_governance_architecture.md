@@ -113,7 +113,7 @@ Proper table naming is critical for **clarity, maintainability, and integration*
 ### 6.2. Naming Convention
 
 **Standard Pattern**
-<prefix>_<project>_<subject>_<grain>
+`<prefix>_<project>_<subject>_<grain>`
 
 - prefix – Type of table: `fact`, `dim`, `stg` (staging), etc.
 
