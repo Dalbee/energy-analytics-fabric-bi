@@ -49,101 +49,59 @@ energy-analytics-fabric-bi/
 ├── projects/
 │   ├── project1-energy-bi/    # BI Artifacts (PBIX, Semantic Model metadata)
 │   ├── project2-engineering/  # PySpark Notebooks & Pipeline JSONs
-│   └── project3-governance/   # CI/CD configs & Security documentation
+│   └── project3-governance-cicd/   # CI/CD configs & Security documentation
 └── README.md                  # Portfolio Home Page
 ```
 
 
 ---
 
-## Project 1 — Energy BI & Analytics Solution
+## 🚀 Project Summaries
 
-A full business intelligence solution built using Power BI and Fabric semantic models.  
-It demonstrates:
+### [Project 1: Energy BI & Analytics Solution](./projects/project1-energy-bi/README.md)
 
-- Data modelling using a star schema
-- Calculation groups and measure definitions
-- Data quality and transformation logic
-- A clean, production-ready BI report
-- Energy-sector KPIs (production, demand, emissions, district heating, etc.)
-
-The project includes sample datasets, semantic model documentation, and a Power BI report.
-
----
-
-## Project 2 — Microsoft Fabric Data Engineering Pipeline
-
-This project implements an end-to-end **data engineering workflow using Microsoft Fabric**, providing the foundation for reliable analytics and reporting in an energy-sector context.  
-
-The workflow covers:
-
-- **Lakehouse-based ingestion** of operational energy datasets (production, district heating, CO₂ emissions)  
-- **PySpark-based transformations** and KPI computation  
-- **Dimensional modeling** with star-schema-inspired curated tables  
-- **Data quality validation** through dedicated notebooks  
-- **Pipeline orchestration** to automate the end-to-end workflow  
-- **Preparation of clean, analysis-ready datasets** for consumption by Power BI semantic models (Project 1)  
-
-Artifacts include transformation and validation notebooks, pipeline definitions, curated Delta tables, and architecture documentation. This project reflects enterprise-grade data engineering practices suitable for a **Senior / Tech Lead–level role**.
+A full business intelligence solution built using Power BI and Fabric semantic models. Includes data modelling using a **Star Schema**, calculation groups, and energy-sector KPIs (production, demand, emissions).
 
 
 ---
 
-## Project 3 — Governance, Security and CI/CD Framework
+### [Project 2: End-to-End Fabric Data Pipeline & Automation](./projects/project2-fabric-pipeline/README.md)
 
-This project illustrates how to manage Fabric in a controlled enterprise environment:
+An end-to-end data engineering workflow using **PySpark** and **Medallion Architecture**. It covers Lakehouse-based ingestion, dimensional modeling, and pipeline orchestration with automated quality gates.
 
-- Workspace strategy (Development, Test, Production)
-- Naming conventions and certification processes
-- Dataset governance
-- Tenant-level governance recommendations
-- Gateway configuration and data connections
-- CI/CD using YAML-based deployment pipelines
-- Monitoring model and supporting report
 
-This project reflects modern, mature Fabric governance practices that scale across teams.
+---
+
+### [Project 3: Fabric Governance, Security and CI/CD Framework](./projects/project3-governance-cicd/docs/project3_governance_framework.md)
+
+Illustrates enterprise management of Fabric: Workspace strategy (Dev/Test/Prod), **RLS/OLS** security models, and **CI/CD** using deployment pipelines and Git integration.
 
 ---
 
 ## Documentation
 
-All architecture, governance, and design materials are located in `/docs`.
+All architecture, governance, and design materials are located in [/docs](./docs).
 
 Key documents include:
 
-- Fabric architecture diagrams
-- Governance blueprint
-- Security and access models
-- Naming standard
-- CI/CD process documentation
-- RLS/OLS implementation guide
-- Release procedure
+- [Fabric architecture diagrams](./docs/architecture/overall_fabric_architecture.md)
+- [Security and access models](./docs/architecture/project2_pipeline_architecture.md#6-governance-and-security)
+- [Naming standard](./docs/architecture/project3_governance_architecture.md#62-naming-convention)
+- [CI/CD process documentation](./docs/architecture/project3_governance_architecture.md)
 
 These documents are written to reflect enterprise standards.
 
 ---
 
-## Technology Stack
+## 🧭 How to Navigate This Repository
 
-- Microsoft Fabric (Lakehouse, Pipelines, Dataflows, Notebooks, Semantic Models)
-- Power BI
-- Git integration with Fabric
-- SQL / PySpark
-- GitHub Actions for CI/CD
+1. Start with the [/docs](./docs) folder to understand the architecture and governance design.
 
----
+2. **Explore Engineering:** See [Project 2](./projects/project2-fabric-pipeline) for the Spark ingestion and transformation pipelines.
 
-## How to Navigate This Repository
+3. **Explore Analytics:** See [Project 1](./projects/project1-energy-bi) for the BI solution and Star Schema.
 
-Start with the `/docs` folder to understand the architecture and governance design.
-
-Then explore each project:
-
-- `/projects/project1-energy-bi` for the BI solution
-- `/projects/project2-fabric-pipeline` for the ingestion and transformation pipeline
-- `/projects/project3-governance-cicd` for governance and deployment artefacts
-
-The `/website` folder contains optional public-facing material for publishing the portfolio as a static site.
+4. **Explore Operations:** See [Project 3](./projects/project3-governance-cicd) for governance and deployment artefacts.
 
 ---
 
