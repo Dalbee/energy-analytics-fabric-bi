@@ -102,13 +102,55 @@ This outlines the naming standards for tables within the Energy Analytics projec
 ### 6.1. Context
 
 - Notebooks follow the pattern:
-nb_transform_energy_data, nb_validate_energy_tables
+`nb_transform_energy_data`, `nb_validate_energy_tables`
 
-SQL Analytics endpoint: lh_energy_analytics
+- SQL Analytics endpoint: `lh_energy_analytics`
 
-Lakehouse: lh_energy_analytics
+- Lakehouse: `lh_energy_analytics`
 
-Proper table naming is critical for clarity, maintainability, and integration with Lakehouse / Medallion architecture.
+Proper table naming is critical for **clarity, maintainability, and integration** with Lakehouse / Medallion architecture.
+
+### 6.2. Naming Convention
+
+**Standard Pattern**
+<prefix>_<project>_<subject>_<grain>
+
+- prefix – Type of table: `fact`, `dim`, `stg` (staging), etc.
+
+- project – Project name (optional if schema implies project)
+
+- subject – What the table is about: `energy`, `heating`, `co2`, etc.
+
+- grain – Aggregation or granularity: `daily`, `monthly`, etc.
+
+Example:
+```
+fact_heating_emissions_daily
+fact_energy_analytics_kpi_daily
+dim_date
+dim_plant
+```
+
+### 6.3. 3. Recommended Approach
+
+Two options for naming tables: 
+
+**Option A — Project implied by schema (simpler)**
+
+Schema: `Energy-Analytics.dbo`
+<prefix>_<subject>_<grain>
+
+Examples:
+```
+fact_energy_daily
+fact_heating_emissions_daily
+dim_date
+dim_plant
+```
+
+**Option B — Project included in table name (stricter governance)**
+
+<prefix>_<project>_<subject>_<grain>
 
 Examples:
 ```
@@ -116,7 +158,7 @@ Examples:
     fact_energy_analytics_daily
     dim_energy_analytics_plant
 ```
-
+Decide one approach and apply consistently across all tables and notebooks.
 
 
 ### 6.4. Current Issues Observed
