@@ -150,13 +150,13 @@ dim_plant
 
 **Option B — Project included in table name (stricter governance)**
 
-<prefix>_<project>_<subject>_<grain>
+`<prefix>_<project>_<subject>_<grain>`
 
 Examples:
 ```
-    fact_energy_analytics_heating_daily
-    fact_energy_analytics_daily
-    dim_energy_analytics_plant
+fact_energy_analytics_heating_daily
+fact_energy_analytics_daily
+dim_energy_analytics_plant
 ```
 Decide one approach and apply consistently across all tables and notebooks.
 
