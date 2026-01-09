@@ -110,6 +110,14 @@ Lakehouse: lh_energy_analytics
 
 Proper table naming is critical for clarity, maintainability, and integration with Lakehouse / Medallion architecture.
 
+Examples:
+```
+    fact_energy_analytics_heating_daily
+    fact_energy_analytics_daily
+    dim_energy_analytics_plant
+```
+
+
 
 ### 6.4. Current Issues Observed
 | Table            | Issue                        | Suggested Fix      |
@@ -120,17 +128,27 @@ Proper table naming is critical for clarity, maintainability, and integration wi
 | factheatingdaily | Missing underscores, unclear | fact_heating_daily |
 | factco2daily     | Missing underscores, unclear | fact_co2_daily     |
 
-### 6.5 
-Use underscores to separate logical components.
 
-Decide if project name will be in the table name or implied by schema.
+### 6.5 Best Practices 
+- Use **underscores** to separate logical components.
 
-Keep granularity (daily, monthly, hourly) explicit in fact tables.
+- Decide if **project name** will be in the table name or implied by schema.
 
-Align notebooks, SQL Analytics endpoints, and Lakehouse tables with the same naming convention.
+- Keep **granularity** (```daily```, ```monthly```, ```hourly```) explicit in fact tables.
+
+- Align **notebooks, SQL Analytics endpoints, and Lakehouse tables** with the same naming convention.
+
+
+### 6.6. Next Steps
+- Enforce the naming standard across all new tables.
+
+- Optionally, generate a **rename map** for existing tables to align with the chosen standard.
+
+- Maintain consistency with **Lakehouse / Medallion architecture governance.**
+
 ---
 
-### 7. Certification
+## 7. Certification
 - Only validated semantic models in the Production workspace are endorsed  
 - Endorsed models represent the authoritative source for reporting  
 
