@@ -25,7 +25,7 @@ Together, these projects demonstrate a complete, production-aligned Fabric ecosy
 ## Repository Structure
 
 ```
-fortum-fabric-bi-platform/
+energy-analytics-fabric-bi/
 │
 ├── docs/ # Architecture, governance, design documentation
 ├── projects/ # All three project implementations

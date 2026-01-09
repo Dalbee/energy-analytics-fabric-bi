@@ -47,23 +47,25 @@ This structure enables:
 
 ```mermaid
 flowchart LR
-    A[Raw Data: CSV or API] --> B[Dataflow Gen2 Standardisation]
-    B --> C[Lakehouse Curated Tables]
-    C --> D[Power BI Semantic Model]
-    D --> E[Energy Dashboard]
-
+    A[Raw Data: CSV / API] --> B[OneLake: Lakehouse Files]
+    B --> C[PySpark Transformations]
+    C --> D[Lakehouse Curated Tables]
+    D --> E[Power BI Semantic Model: Import Mode]
+    E --> F[Energy Dashboard]
 ```
 ---
 
 ## 4. Transformation Strategy
 
-Fabric transformations are designed to follow a layered, scalable, and optimised pattern:
+Fabric transformations are designed to follow a layered, scalable, and code-first pattern:
 
-- Light transformations are implemented using Dataflows Gen2 (standardisation, basic cleansing).
-- Heavy transformations and business logic are implemented in PySpark notebooks.
-- Transformation outputs are written to curated Lakehouse tables.
-- Incremental processing is used where applicable to improve performance and reduce compute cost.
-- Schema evolution and validation rules ensure data consistency and auditability.
+- **PySpark Engineering:** All business logic, standardisation, and cleansing are implemented in Spark notebooks to handle high-volume energy datasets.
+
+- **KPI Ingestion:** Business KPIs are computed upstream in Spark to ensure they are available to any tool consuming the Lakehouse.
+
+- **Delta Lake Persistence:** Transformation outputs are written to the Gold layer in Delta format.
+
+- **Validation Gates:** Automated quality checks run within the pipeline to ensure data consistency before the reporting layer is refreshed.
 
 ---
 
@@ -71,12 +73,13 @@ Fabric transformations are designed to follow a layered, scalable, and optimised
 
 The semantic layer standardises how business metrics are defined and consumed:
 
-- Star schema semantic models to enable performant and intuitive reporting.
-- Calculation groups to centralise and standardise time-intelligence logic.
-- Centralised organisational measure groups to ensure KPI consistency.
-- Data validation logic applied before semantic model refresh.
-- Role-Level Security (RLS) applied where appropriate to restrict sensitive data.
-- Certified datasets used as “single source of truth” for enterprise reporting.
+- **Import Mode:** Utilizes the VertiPaq engine to provide the most responsive user experience and sub-second visual interactivity.
+
+- **Unified Measure Library:** Centralised DAX measures ensure KPI consistency across all report pages.
+
+- **Security:** Row-Level Security (RLS) restricts access to sensitive plant data based on user roles.
+
+- **Certified Datasets:** Published as a "Single Source of Truth" for enterprise-wide self-service reporting.
 
 ---
 
@@ -84,12 +87,13 @@ The semantic layer standardises how business metrics are defined and consumed:
 
 Deployment is managed using Fabric’s native DevOps capabilities:
 
-- Git integration is used for version control of semantic models, reports, Lakehouse artifacts, and pipelines.
-- Deployment pipelines support a structured Dev → Test → Production flow.
-- Automated validation steps ensure only approved changes move forward.
-- GitHub Actions is used to orchestrate CI/CD where required.
-- Workspace roles enforce environment-level separation and governance.
-- Release documentation is maintained for audit and compliance.
+- **Git Integration:** Version control for semantic models (BIM files), reports, and Lakehouse artifacts.
+
+- **Deployment Pipelines:** A structured Dev → Test → Production flow ensures stability.
+
+- **Automation:** GitHub Actions orchestrate CI/CD validation where required.
+
+- **Release Documentation:** Maintained for audit and compliance, reflecting energy-sector standards.
 
 ---
 
@@ -97,26 +101,20 @@ Deployment is managed using Fabric’s native DevOps capabilities:
 
 The architecture aligns with enterprise-grade governance requirements:
 
-- Workspace separation for development, testing, and production.
-- Naming conventions enforce consistency across datasets, pipelines, notebooks, and reports.
-- Dataset certification ensures only validated assets are used in decision-making.
-- Access control implemented using RLS, OLS, and workspace permissions.
-- Monitoring dashboards track pipeline runs, refresh health, usage, and capacity consumption.
-- Change management processes ensure traceability and risk reduction.
-- Compliance considerations include audit logs, data lineage visibility, and sensitivity labels.
+- **Workspace Separation:** Dedicated environments for development and production.
+
+- **Naming Standards:** Enforced consistency across all Fabric items.
+
+- **Dataset Certification:** Clearly identifies validated assets for business decision-making.
+
+- **Monitoring:** Dashboards track refresh health, capacity consumption, and usage metrics.
+
+- **Lineage:** Full visibility from raw source files to final Power BI visuals via Fabric Lineage View.
 
 ---
 
 ## 8. Summary
 
-This architecture provides a scalable, governed, and maintainable analytics foundation built on Microsoft Fabric.  
-It supports:
-
-- Reliable data ingestion  
-- Enterprise-grade transformations  
-- A reusable semantic layer  
-- Governed reporting  
-- DevOps-aligned deployment  
-- Long-term adaptability for a growing analytics organisation  
+This architecture provides a scalable, governed, and maintainable analytics foundation. By combining a **Spark-driven data engineering backbone** with a **high-performance Import Mode semantic layer,** it meets the high availability and reliability needs of large energy-sector organisations.
 
 It is suitable for large energy-sector enterprises that require high availability, strong governance, and consistent KPIs across multiple business units.

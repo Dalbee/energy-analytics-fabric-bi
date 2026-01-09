@@ -1,6 +1,6 @@
 # Project 2: End-to-End Fabric Pipeline Architecture
 
-This document describes the architecture of the ingestion, transformation, and orchestration pipeline implemented using Microsoft Fabric. The design demonstrates how operational data moves through a governed, scalable, and automated analytics environment.
+This document describes the architecture of the ingestion, transformation, and orchestration pipeline implemented using **Microsoft Fabric.** The design demonstrates how operational data moves through a governed, scalable, and automated analytics environment.
 
 ---
 
@@ -8,12 +8,15 @@ This document describes the architecture of the ingestion, transformation, and o
 
 The purpose of this project is to build a production-aligned data engineering pipeline that:
 
-- Ingests data from external or internal sources  
-- Processes and standardises raw data  
-- Applies business transformations at scale  
-- Produces curated, analytics-ready tables  
-- Refreshes Power BI semantic models  
-- Automates scheduling, orchestration, and deployment  
+- **Ingests** raw data from source systems into the **OneLake** foundation.
+
+- **Processes** and standardizes raw data using **PySpark** for high-performance computing.
+
+- **Applies** complex business transformations and energy-sector KPIs at scale.
+
+- **Produces** curated, analytics-ready **Delta Tables** within a Fabric Lakehouse.
+
+- **Automates** orchestration, quality validation, and semantic model refreshes via **Fabric Pipelines.**
 
 This pipeline demonstrates Microsoft Fabric’s ability to support enterprise data engineering workloads.
 
@@ -23,16 +26,16 @@ This pipeline demonstrates Microsoft Fabric’s ability to support enterprise da
 
 ```mermaid
 flowchart TD
-    A[Source Systems] --> B[Dataflow Gen2 Ingestion]
-    B --> C[Lakehouse Raw Zone]
-    C --> D[Notebook PySpark Transformations]
-    D --> E[Lakehouse Curated Zone]
-    E --> F[Semantic Model]
+    A[Source Systems] --> B[OneLake: Lakehouse Files]
+    B --> C[Notebook PySpark: Raw to Silver]
+    C --> D[Notebook PySpark: Silver to Gold]
+    D --> E[Lakehouse Curated Zone: Delta Tables]
+    E --> F[Semantic Model: Import Mode]
     F --> G[Power BI Report]
 
     subgraph Orchestration
         H[Fabric Pipeline]
-        H --> B
+        H --> C
         H --> D
         H --> F
     end
@@ -41,114 +44,89 @@ flowchart TD
 
 ## 3. Core Components
 
-### 3.1 Dataflow Gen2 (Ingestion Layer)
+### 3.1 OneLake Ingestion (Bronze Layer)
 
-- Schema standardisation
+- **Lakehouse Files:** Acts as the primary landing zone for raw operational data (CSV/Parquet).
 
-- Data type enforcement
+- **Immutable Storage:** Source data is stored without modification to ensure auditability and data lineage.
 
-- Basic transformations
+### 3.2 Notebook Transformations (PySpark)
 
-- Load auditing and logging
+- **Scalable Processing:** Utilizes Spark clusters to handle large-scale datasets efficiently.
 
-### 3.2 Lakehouse Raw Zone
+- **Business Logic:** Performs complex joins, energy unit conversions, and operational KPI calculations (e.g., Load Factor, Carbon Intensity).
 
-- Immutable storage of source data
+- **Delta Optimization:** Writes data to the Silver and Gold layers using the Delta Lake format, enabling ACID transactions and schema evolution.
 
-- Auditable and replayable
+### 3.3 Curated Lakehouse (Gold Layer)
 
-### 3.3 Notebook Transformations (PySpark)
+- **Star Schema:** Model-ready curated tables with conformed dimensions (e.g., ```DimPlant```, ```DimDate```).
 
-- Scalable data transformations
+- **Performance:** Optimized for downstream consumption by Power BI via V-Order.
 
-- Joins, aggregations, cleansing
+### 3.4 Fabric Pipeline (Orchestration)
 
-- Delta table optimisation
+- **Workflow Management:** Schedules and sequences the execution of transformation notebooks.
 
-### 3.4 Curated Lakehouse Zone
+- **Quality Gates:** Includes validation logic to halt the pipeline if data quality thresholds are not met, preventing "bad data" from reaching the reporting layer.**
 
-- Model-ready curated tables
-
-- Conformed dimensions
-
-### 3.5 Power BI Semantic Model
-
-- Connects to curated tables
-
-- Supports enterprise BI
-
-### 3.6 Fabric Pipeline (Orchestration)
-
-- Schedules ingestion
-
-- Runs transformations
-
-- Refreshes semantic models
 
 ---
 
 ## 4. Process Flow
 
-### 1. Ingestion:
-Dataflow loads raw data into OneLake.
+- 1. **Ingestion:** Raw files are uploaded or moved into the **Files** section of the Lakehouse on OneLake.
 
-### 2. Raw Zone Storage:
-Source data is stored without modification for audit/compliance.
+- 2. **Standardization:** A PySpark notebook reads the raw files, cleanses the data, and writes it to the **Silver Layer.**
 
-### 3. Transformation:
-PySpark notebook processes raw data into curated delta tables.
+- 3. **Curated Transformation:** Business logic is applied to the Silver data to create the **Gold Layer** (curated Delta Tables).
 
-### 4. Curated Storage:
-Curated tables feed semantic models in Power BI.
+- 4. **Validation:** The pipeline runs a validation check to confirm row counts and schema integrity.
 
-### 5. Reporting:
-Data is visualised in governed Power BI dashboards.
+- 5. **Semantic Refresh:** Upon success, the **Fabric Pipeline** triggers an **Import Mode** refresh of the Power BI Semantic Model.
 
-### 6. Automation:
-Fabric Pipeline orchestrates each step, ensuring reliability.
+- 6. **Reporting:** Business users consume the latest validated data through responsive Power BI dashboards.
 
 ---
 
 ## 5. Best Practices Applied
 
-- Use Dataflows for ingestion and basic transformations
+- **Code-First Transformation:** Using PySpark for maximum flexibility and performance over GUI-based tools.
 
-- Keep heavy transformations in notebooks
+- **Medallion Architecture:** Implementing a clear separation between Raw (Bronze), Cleansed (Silver), and Curated (Gold) data layers.
 
-- Use Lakehouse Delta tables for performance
+- **Upstream KPI Calculation:** Reducing DAX complexity by pre-computing authoritative metrics in the Spark engine.
 
-- Separate raw and curated layers
-
-- Keep semantic models thin and governed
-
-- Ensure lineage coverage from sources to reporting
+- **Circuit Breaker Pattern:** Using automated validation gates to ensure only high-quality data triggers a report refresh.
 
 ---
 
 ## 6. Governance and Security
 
-- Access control applied at workspace and Lakehouse folder levels
+- **Access Control:**  
+Applied at the workspace and Lakehouse level to ensure the principle of least privilege.
 
-- Sensitive tables protected using RLS/OLS at the semantic model
+- **Naming Standards:**  
+Alignment with enterprise conventions for clear asset discovery and lineage.
 
-- Naming conventions align with enterprise standards
-
-- Data lineage maintained using Fabric's lineage view
+- **Data Lineage:**  
+Maintained automatically through Fabric's built-in lineage view across the entire pipeline.
 
 ---
 
 ## 7. Deployment Approach
 
-- Git-backed development for pipelines, notebooks, and semantic models
+- **Git-Backed Development:**  
+Notebooks and pipeline definitions are synchronized with a GitHub repository.
 
-- Deployment pipelines enforce Dev → Test → Prod progression
+- **Environment Separation:**  
+Deployment pipelines enforce a structured progression from Dev → Test → Production.
 
-- GitHub Actions can be used for automated validation
-
-- Release documentation for every deployment wave
+- **CI/CD:**  
+Automated validation steps ensure only approved and tested code is promoted to the production environment.
 
 ---
 
 ## 8. Summary
 
-This pipeline architecture represents a scalable, production-ready data engineering workflow. It ensures reliable ingestion, transformation, governance, and distribution of analytics-ready data across an enterprise environment.
+This pipeline architecture represents a scalable, production-ready data engineering workflow. By utilizing **PySpark** and the **Fabric Lakehouse**, the solution ensures reliable ingestion, governed transformations, and high-performance distribution of analytics-ready data across the enterprise.

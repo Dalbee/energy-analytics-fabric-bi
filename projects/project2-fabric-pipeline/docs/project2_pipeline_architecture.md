@@ -1,24 +1,24 @@
-# Project 2: Fabric Pipeline Architecture (End-to-End Data Engineering)
+# Project 2: End-to-End Fabric Pipeline Architecture
 
-This document outlines the end-to-end data engineering architecture implemented in **Project 2** using Microsoft Fabric.  
-It describes how raw energy datasets are transformed into curated, analytics-ready Delta tables using PySpark and Fabric Pipelines.
-
-The architecture reflects a **production-aligned data engineering pattern** suitable for enterprise energy analytics.
+This document describes the architecture of the ingestion, transformation, and orchestration pipeline implemented using **Microsoft Fabric.** The design demonstrates how operational data moves through a governed, scalable, and automated analytics environment.
 
 ---
 
 ## 1. Purpose
 
-The pipeline is designed to:
+The purpose of this project is to build a production-aligned data engineering pipeline that:
 
-- Ingest operational datasets for energy production, district heating, and CO₂ emissions
-- Store source data in a Lakehouse using Delta format
-- Perform validated, scalable PySpark transformations
-- Produce curated, analytics-ready Delta tables
-- Enforce basic data quality checks through pipeline validation
-- Provide a clean data engineering foundation for downstream analytics
+- **Ingests** raw data from source systems into the **OneLake** foundation.
 
-This architecture supports the creation of reusable, governed data products for energy analytics use cases.
+- **Processes** and standardizes raw data using **PySpark** for high-performance computing.
+
+- **Applies** complex business transformations and energy-sector KPIs at scale.
+
+- **Produces** curated, analytics-ready **Delta Tables** within a Fabric Lakehouse.
+
+- **Automates** orchestration, quality validation, and semantic model refreshes via **Fabric Pipelines.**
+
+This pipeline demonstrates Microsoft Fabric’s ability to support enterprise data engineering workloads.
 
 ---
 
@@ -26,124 +26,107 @@ This architecture supports the creation of reusable, governed data products for 
 
 ```mermaid
 flowchart TD
-    A[CSV Files in Lakehouse Files] --> B[Lakehouse Tables]
-    B --> C[PySpark Transformation Notebook]
-    C --> D[Curated Delta Tables]
-    D --> E[Validation Notebook]
+    A[Source Systems] --> B[OneLake: Lakehouse Files]
+    B --> C[Notebook PySpark: Raw to Silver]
+    C --> D[Notebook PySpark: Silver to Gold]
+    D --> E[Lakehouse Curated Zone: Delta Tables]
+    E --> F[Semantic Model: Import Mode]
+    F --> G[Power BI Report]
 
-    subgraph Fabric Pipeline
-        C
-        E
+    subgraph Orchestration
+        H[Fabric Pipeline]
+        H --> C
+        H --> D
+        H --> F
     end
 ```
 ---
 
-## 3. Components Overview
+## 3. Core Components
 
-### 3.1 Lakehouse (Raw & Curated Tables)
+### 3.1 OneLake Ingestion (Bronze Layer)
 
-- Stores data in Delta format
-- Supports ACID transactions and schema evolution
-- Separates raw source data from curated analytics tables
-- Acts as the single source of truth for downstream analytics
+- **Lakehouse Files:** Acts as the primary landing zone for raw operational data (CSV/Parquet).
 
----
+- **Immutable Storage:** Source data is stored without modification to ensure auditability and data lineage.
 
-### 3.2 PySpark Transformation Notebook
+### 3.2 Notebook Transformations (PySpark)
 
-- Cleans and standardises raw datasets
-- Creates authoritative dimension tables (`dimdate`, `dimplant`)
-- Enriches plant data with installed capacity and commissioning year
-- Joins fact and dimension data
-- Computes business KPIs upstream in Spark
-- Writes curated Delta tables to the Lakehouse
+- **Scalable Processing:** Utilizes Spark clusters to handle large-scale datasets efficiently.
 
-All transformations are deterministic, idempotent, and safe to run repeatedly.
+- **Business Logic:** Performs complex joins, energy unit conversions, and operational KPI calculations (e.g., Load Factor, Carbon Intensity).
 
----
+- **Delta Optimization:** Writes data to the Silver and Gold layers using the Delta Lake format, enabling ACID transactions and schema evolution.
 
-### 3.3 Lakehouse Curated Zone
+### 3.3 Curated Lakehouse (Gold Layer)
 
-- Contains domain-ready Delta tables
-- Optimised for analytics and reporting
-- Clear separation between ingestion logic and business logic
-- Designed for consumption by Power BI semantic models (Project 1)
+- **Star Schema:** Model-ready curated tables with conformed dimensions (e.g., ```DimPlant```, ```DimDate```).
 
----
+- **Performance:** Optimized for downstream consumption by Power BI via V-Order.
 
-### 3.4 Validation Notebook
+### 3.4 Fabric Pipeline (Orchestration)
 
-- Verifies curated tables exist
-- Ensures datasets are non-empty
-- Acts as a quality gate in the pipeline
-- Prevents downstream consumption of incomplete or invalid data
+- **Workflow Management:** Schedules and sequences the execution of transformation notebooks.
 
----
+- **Quality Gates:** Includes validation logic to halt the pipeline if data quality thresholds are not met, preventing "bad data" from reaching the reporting layer.**
 
-### 3.5 Fabric Pipeline
-
-- Orchestrates notebook execution in sequence
-- Runs transformation logic first
-- Executes validation checks after transformations
-- Provides monitoring, logging, and scheduling
 
 ---
 
 ## 4. Process Flow
 
-- CSV files are uploaded to Lakehouse Files
-- Lakehouse tables are created and maintained in Delta format
-- Transformation notebook reads Lakehouse tables and applies business logic
-- Curated tables are written back to the Lakehouse
-- Validation notebook confirms data quality
-- Pipeline completes only if all validation checks succeed
+- 1. **Ingestion:** Raw files are uploaded or moved into the **Files** section of the Lakehouse on OneLake.
+
+- 2. **Standardization:** A PySpark notebook reads the raw files, cleanses the data, and writes it to the **Silver Layer.**
+
+- 3. **Curated Transformation:** Business logic is applied to the Silver data to create the **Gold Layer** (curated Delta Tables).
+
+- 4. **Validation:** The pipeline runs a validation check to confirm row counts and schema integrity.
+
+- 5. **Semantic Refresh:** Upon success, the **Fabric Pipeline** triggers an **Import Mode** refresh of the Power BI Semantic Model.
+
+- 6. **Reporting:** Business users consume the latest validated data through responsive Power BI dashboards.
 
 ---
 
 ## 5. Best Practices Applied
 
-- Raw → Curated separation
-- Delta Lake for reliability and performance
-- Upstream KPI computation in Spark
-- Dimensional modeling for analytics
-- Clear notebook structure and modular logic
-- Pipeline-based orchestration
-- Data quality enforcement before analytics consumption
+- **Code-First Transformation:** Using PySpark for maximum flexibility and performance over GUI-based tools.
+
+- **Medallion Architecture:** Implementing a clear separation between Raw (Bronze), Cleansed (Silver), and Curated (Gold) data layers.
+
+- **Upstream KPI Calculation:** Reducing DAX complexity by pre-computing authoritative metrics in the Spark engine.
+
+- **Circuit Breaker Pattern:** Using automated validation gates to ensure only high-quality data triggers a report refresh.
 
 ---
 
-## 6. Security & Access Control
+## 6. Governance and Security
 
-- Workspace-level roles restrict access to Lakehouse assets
-- Raw and curated tables can be governed independently
-- Downstream security (e.g. RLS) applied at semantic model level (Project 1)
+- **Access Control:**  
+Applied at the workspace and Lakehouse level to ensure the principle of least privilege.
+
+- **Naming Standards:**  
+Alignment with enterprise conventions for clear asset discovery and lineage.
+
+- **Data Lineage:**  
+Maintained automatically through Fabric's built-in lineage view across the entire pipeline.
 
 ---
 
-## 7. Scope Clarification
+## 7. Deployment Approach
 
-This project focuses **exclusively on data engineering**.
+- **Git-Backed Development:**  
+Notebooks and pipeline definitions are synchronized with a GitHub repository.
 
-The following are intentionally **out of scope for Project 2**:
+- **Environment Separation:**  
+Deployment pipelines enforce a structured progression from Dev → Test → Production.
 
-- Semantic model refresh orchestration
-- CI/CD automation
-- Deployment Pipelines (Dev → Test → Prod)
-
-These capabilities are handled in separate projects to maintain a clean separation of concerns.
+- **CI/CD:**  
+Automated validation steps ensure only approved and tested code is promoted to the production environment.
 
 ---
 
 ## 8. Summary
 
-Project 2 delivers a complete, production-aligned **Microsoft Fabric data engineering pipeline**.
-
-It demonstrates:
-
-- Lakehouse-based data engineering
-- PySpark transformations and KPI computation
-- Dimensional modeling
-- Pipeline orchestration
-- Built-in data validation
-
-This project forms the **data engineering backbone** of the Energy Analytics Platform and directly supports downstream semantic modeling and reporting.
+This pipeline architecture represents a scalable, production-ready data engineering workflow. By utilizing **PySpark** and the **Fabric Lakehouse**, the solution ensures reliable ingestion, governed transformations, and high-performance distribution of analytics-ready data across the enterprise.
