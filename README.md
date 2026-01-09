@@ -4,32 +4,53 @@ This repository contains a set of three demonstration projects designed to showc
 
 The repository is organised into three primary projects:
 
-1. Energy BI & Analytics Solution (Project 1)
-2. End-to-End Fabric Data Pipeline & Automation (Project 2)
-3. Fabric Governance, Security and CI/CD Framework (Project 3)
+1. **Project 1: Energy BI & Analytics Solution** (.projects/project1-energy-bi/README.md)
+
+2. **Project 2: End-to-End Fabric Data Pipeline & Automation** (.projects/project2-fabric-pipeline/README.md)
+
+3. **Project 3: Fabric Governance, Security and CI/CD Framework** (.projects/project3-governance-cicd/docs/project3_governance_framework.md)
 
 Together, these projects demonstrate a complete, production-aligned Fabric ecosystem including ingestion, transformation, modelling, reporting, governance, operations, and deployment automation.
 
 ---
 
-## Objectives
+## 🎯 Key Objectives
 
-- Demonstrate ability to design, build and operate enterprise-grade solutions in Microsoft Fabric.
-- Provide a blueprint for a scalable, governed analytics environment suitable for an energy-sector organisation.
-- Implement an end-to-end data flow from ingestion to reporting.
-- Showcase best practices in workspace structure, naming standards, RLS/OLS, and deployment pipelines.
-- Present a complete and clear documentation package for technical and non-technical stakeholders.
+- **Scalability:** Design a platform capable of handling millions of rows of operational energy data.
+
+- **Single Source of Truth:** Compute complex KPIs upstream in Spark to ensure consistency across all downstream tools.
+
+- **Governance:** Implement a "Least Privilege" security model and a structured release process.
+
+- **Performance:** Balance the heavy lifting of Spark with the lightning-fast interactivity of Power BI.
 
 ---
 
-## Repository Structure
+## 🛠️ Technology Stack
+
+- **Storage:** Microsoft Fabric OneLake & Lakehouse (Delta Lake format).
+
+- **Compute:** Spark (PySpark Notebooks) & SQL Analytics Endpoints.
+
+- **Orchestration:** Fabric Data Pipelines.
+
+- **Reporting:** Power BI (Import Mode, DAX, Calculation Groups).
+
+- **DevOps:** GitHub Repository Integration & Fabric Deployment Pipelines.
+
+
+---
+
+## 📁 Repository Structure
 
 ```
 energy-analytics-fabric-bi/
-│
-├── docs/ # Architecture, governance, design documentation
-├── projects/ # All three project implementations
-└── website/ # Public portfolio pages (optional publishing)
+├── docs/                      # Global Architecture & Governance Blueprints
+├── projects/
+│   ├── project1-energy-bi/    # BI Artifacts (PBIX, Semantic Model metadata)
+│   ├── project2-engineering/  # PySpark Notebooks & Pipeline JSONs
+│   └── project3-governance/   # CI/CD configs & Security documentation
+└── README.md                  # Portfolio Home Page
 ```
 
 
@@ -126,9 +147,8 @@ The `/website` folder contains optional public-facing material for publishing th
 
 ---
 
-## Contact
+## 📧 Contact & Professional Context
 
-This portfolio is part of a demonstration of Fabric engineering, governance and architectural capability for an enterprise data environment.
-
+This repository is a demonstration of architectural capability in the Microsoft Fabric ecosystem. It reflects a commitment to code-first engineering, rigorous governance, and high-performance data delivery.
 
 
