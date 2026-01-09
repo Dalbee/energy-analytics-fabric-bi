@@ -4,11 +4,11 @@ This repository contains a set of three demonstration projects designed to showc
 
 The repository is organised into three primary projects:
 
-1. **[Project 1: Energy BI & Analytics Solution]**(./projects/project1-energy-bi/README.md)
+1. **[Project 1: Energy BI & Analytics Solution](./projects/project1-energy-bi/README.md)**
 
-2. **[Project 2: End-to-End Fabric Data Pipeline & Automation]**(./projects/project2-fabric-pipeline/README.md)
+2. **[Project 2: End-to-End Fabric Data Pipeline & Automation](./projects/project2-fabric-pipeline/README.md)**
 
-3. **[Project 3: Fabric Governance, Security and CI/CD Framework]**(./projects/project3-governance-cicd/docs/project3_governance_framework.md)
+3. **[Project 3: Fabric Governance, Security and CI/CD Framework](./projects/project3-governance-cicd/docs/project3_governance_framework.md)**
 
 Together, these projects demonstrate a complete, production-aligned Fabric ecosystem including ingestion, transformation, modelling, reporting, governance, operations, and deployment automation.
 
