@@ -1,141 +1,177 @@
 # Project 3: Fabric Governance, Security & CI/CD Architecture
 
-This document describes the governance and operational framework required to manage Microsoft Fabric at enterprise scale. It includes workspace management, security models, naming standards, deployment processes, and monitoring.
+## 1. Overview
+
+This project defines the enterprise-grade governance, security, and CI/CD framework for the Energy Analytics Platform built on Microsoft Fabric. It provides the operational backbone that ensures data transformation logic and analytics assets are secure, compliant, version-controlled, and reliably deployed across environments.
+
+This project complements:
+- Project 1: Power BI Semantic Models & Analytics
+- Project 2: Spark-Based Data Transformation Notebook
 
 ---
 
-## 1. Purpose
+### Objectives
 
-The objective of this project is to establish an enterprise-grade governance and DevOps framework for:
-
-- Data security
-- Workspace organisation
-- Semantic model lifecycle management
-- Deployment automation
-- Access control and auditing
-- Monitoring and operational oversight
-
-This framework ensures Fabric remains compliant, scalable, and consistent across business units.
+- Establish secure, governed workspaces across the platform
+- Enforce environment separation (Dev → Test → Prod)
+- Enable automated CI/CD using GitHub and Fabric Deployment Pipelines
+- Ensure auditability and compliance for energy-sector data
+- Provide observability for pipelines, capacity, and data lineage
 
 ---
 
-## 2. High-Level Governance Architecture Diagram
+## 2. Governance & DevOps Architecture Overview
 
 ```mermaid
 flowchart LR
-    A[Fabric Tenant Settings] --> B[Workspace Strategy]
-    B --> C[Development Workspace]
-    B --> D[Test Workspace]
-    B --> E[Production Workspace]
+    A[Fabric Tenant] --> B[Workspace Strategy]
+    B --> C[Development]
+    B --> D[Test / QA]
+    B --> E[Production]
 
-    F[Naming Standards] --> C
-    F --> D
-    F --> E
-
-    G[Security Model: RLS / OLS] --> E
-    H[Dataset Certification] --> E
-
-    subgraph Deployment
-        X[Git Repository] --> Y[CI/CD Pipeline]
-        Y --> C
-        Y --> D
-        Y --> E
+    subgraph "CI/CD Lifecycle"
+        X[GitHub Repository] -- Git Integration --> C
+        C -- Deployment Pipeline --> D
+        D -- Manual Approval --> E
     end
+
+    subgraph "Security Layer"
+        E --> F[RLS: Plant-Level Security]
+        E --> G[OLS: Sensitive Metric Hiding]
+    end
+
+
 ```
 
 ---
 
-## 3. Governance Components
-### 3.1 Tenant-Level Governance
+## 3. ## Workspace & Environment Strategy
 
-- Access policies
+The platform is divided into three isolated environments to ensure stability and controlled releases:
 
-- Capacity management
+### 3.1 Development
+- Active development of the Spark transformation notebook  
+- Semantic model design and iteration  
+- Rapid experimentation with Git-backed version control  
 
-- Global settings for data movement and workloads
+### 3.2 Test / QA
+- Validation of transformation logic  
+- User Acceptance Testing (UAT)  
+- Performance and data quality checks  
 
-### 3.2 Workspace Strategy
-
-- Clear separation of Dev, Test, Prod
-
-- Role-based access for each environment
-
-### 3.3 Naming Standards
-
-- Consistent naming for datasets, reports, notebooks, pipelines, and folders
-
-### 3.4 Dataset Governance
-
-- Certified datasets
-
-- Version control
-
-- Refresh management
-
-### 3.5 Security Model
-
-- RLS for user-level filtering
-
-- OLS for hiding sensitive columns
+### 3.3 Production
+- Locked-down environment  
+- Hosts production-ready datasets produced by the transformation notebook  
+- Serves trusted data to Power BI reports and business users  
 
 ---
 
-## 4. Operational Flow
+## 4. Data Transformation Model
 
-- Developers work in Git-connected development workspaces.
+A single Spark notebook is responsible for:
+- Reading raw data from OneLake  
+- Applying all business transformations and calculations  
+- Writing curated datasets for analytical consumption  
 
-- Changes are validated and promoted to Test via deployment pipelines.
-
-- Automated tests and checks are performed.
-
-- Approved assets move to Production.
-
-- Monitoring captures refresh failures, pipeline errors, and dataset performance.
-
----
-
-## 5. Best Practices Applied
-
-- Principle of least privilege
-
-- Dev/Test/Prod separation
-
-- Automated deployments
-
-- Data lineage visibility
-
-- Audit-ready documentation
-
-- Dataset certification workflow
+This approach:
+- Simplifies lineage and maintenance  
+- Ensures consistent logic across environments  
+- Makes deployment and rollback straightforward via Git  
 
 ---
 
-## 6. Security and Compliance
+## 5. Security Model
 
-- Strict role-based access control
+Security is enforced using Microsoft Fabric’s native capabilities.
 
-- Sensitivity labels applied where needed
+### Row-Level Security (RLS)
+- Ensures users only see data for plants they are authorized to access  
+- Implemented at the semantic model level  
 
-- Audit logs enabled through Fabric Admin Portal
-
-- Governance aligned with energy-sector regulatory needs
-
----
-
-## 7. Deployment and Release Process
-
-- GitHub for version control
-
-- GitHub Actions for CI/CD validation
-
-- Fabric Deployment Pipelines for release flow
-
-- Automated promotion between environments
-
-- Manual approval gates where needed
+### Object-Level Security (OLS)
+- Hides sensitive columns such as financial or emissions metrics  
+- Protects commercially sensitive data  
 
 ---
 
-## 8. Summary
+## 6. Governance Standards
 
-This governance framework ensures Microsoft Fabric can operate securely, consistently, and at scale within a large analytical organisation. It supports compliance, reliability, and high-quality analytical delivery across teams.
+### Energy Analytics Table Naming Conventions
+This outlines the naming standards for tables within the Energy Analytics project, ensuring consistency, readability, and governance across notebooks, SQL endpoints, and the Lakehouse.
+
+### 6.1. Context
+
+- Notebooks follow the pattern:
+nb_transform_energy_data, nb_validate_energy_tables
+
+SQL Analytics endpoint: lh_energy_analytics
+
+Lakehouse: lh_energy_analytics
+
+Proper table naming is critical for clarity, maintainability, and integration with Lakehouse / Medallion architecture.
+
+
+### 6.4. Current Issues Observed
+| Table            | Issue                        | Suggested Fix      |
+| ---------------- | ---------------------------- | ------------------ |
+| dimdate          | Missing underscore           | dim_date           |
+| dimplant         | Missing underscore           | dim_plant          |
+| factenergydaily  | Missing underscores, unclear | fact_energy_daily  |
+| factheatingdaily | Missing underscores, unclear | fact_heating_daily |
+| factco2daily     | Missing underscores, unclear | fact_co2_daily     |
+
+### 6.5 
+Use underscores to separate logical components.
+
+Decide if project name will be in the table name or implied by schema.
+
+Keep granularity (daily, monthly, hourly) explicit in fact tables.
+
+Align notebooks, SQL Analytics endpoints, and Lakehouse tables with the same naming convention.
+---
+
+### 7. Certification
+- Only validated semantic models in the Production workspace are endorsed  
+- Endorsed models represent the authoritative source for reporting  
+
+---
+
+## 8. CI/CD & Deployment Process
+
+### Git Integration
+- Spark transformation notebook  
+- Semantic model metadata  
+- Deployment artifacts synchronized with GitHub  
+
+### Deployment Pipelines
+- Controlled promotion from Dev → Test → Prod  
+- Manual approval gates for Production  
+
+### Automated Validation
+- Data quality and validation checks must pass before promotion  
+- Prevents faulty logic from reaching Production  
+
+### Audit Trail
+- Git commit history provides full traceability  
+- Clear visibility into code and metadata changes  
+
+---
+
+## 9. Monitoring & Observability
+
+### Notebook Monitoring
+- Track Spark execution duration and failures  
+
+### Capacity Management
+- Monitor Fabric Capacity Unit (CU) usage  
+- Optimize cost and execution efficiency  
+
+### Data Lineage
+- Use Fabric Lineage View for end-to-end traceability  
+- Visibility from raw OneLake sources to Power BI reports  
+
+---
+
+## 10. Summary
+
+Project 3 demonstrates a governed, production-ready Microsoft Fabric platform centered around a single, well-controlled Spark transformation notebook. By combining strong security, structured CI/CD, and clear environment separation, the platform achieves the reliability and maintainability expected from a Tech Lead–level implementation.
