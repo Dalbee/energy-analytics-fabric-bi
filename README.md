@@ -72,7 +72,7 @@ An end-to-end data engineering workflow using **PySpark** and **Medallion Archit
 
 ---
 
-### [Project 3: Fabric Governance, Security and CI/CD Framework](./projects/project3-governance-cicd/project3_governance_framework.md)
+### [Project 3: Fabric Governance, Security and CI/CD Framework](./projects/project3-governance-cicd)
 
 Illustrates enterprise management of Fabric: Workspace strategy (Dev/Test/Prod), **RLS/OLS** security models, and **CI/CD** using deployment pipelines and Git integration.
 
