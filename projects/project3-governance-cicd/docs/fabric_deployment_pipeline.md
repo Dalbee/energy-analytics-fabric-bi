@@ -1,6 +1,6 @@
 # Fabric Deployment Pipeline (Dev → Test → Prod)
 
-This document describes the promotion process for Fabric assets using Deployment Pipelines and GitHub integration.
+This document describes the promotion process for Fabric assets using Deployment Pipelines and GitHub integration. It ensures that data engineering and BI assets are moved through environments with high integrity.
 
 ---
 
@@ -30,28 +30,33 @@ flowchart LR
 ## 3. Pipeline Stages
 
 ### **Stage 1: Development**
-Engineers develop:
-- Dataflows  
-- Notebooks  
-- Pipelines  
-- Semantic models  
+Engineers develop and iterate on:
 
-GitHub sync ensures versioning.
+- **PySpark Notebooks** (Standardization & Transformation)
+
+- **Fabric Pipelines** (Orchestration)
+
+- **Semantic Models** (Star Schema / Import Mode)
+
+GitHub sync ensures every code change is versioned.
 
 
 ### **Stage 2: Test**
-Automated smoke tests:
-- Pipeline run  
-- Schema checks  
-- Data volume checks  
-- Model refresh  
+Automated and manual validation:
+
+- **Notebook Quality Gates:** Execution of validation notebooks.
+
+- **UAT:** Business logic verification for Energy KPIs.
+
+- **Model Refresh:** Testing VertiPaq compression and refresh performance.
 
 
 ### **Stage 3: Production**
-Manual approval required.  
-Promotion triggers:
-- Prod model refresh  
-- Operational monitoring
+Manual approval required via Deployment Pipelines. Promotion triggers:
+
+- **Production Model Refresh:** Pulling Gold Delta tables into the high-performance memory engine.
+
+- **Operational Monitoring:** Integration with the platform health dashboard.
 
 ---
 

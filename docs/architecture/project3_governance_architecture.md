@@ -45,7 +45,7 @@ flowchart LR
 
 ---
 
-## 3. ## Workspace & Environment Strategy
+## 3. Workspace & Environment Strategy
 
 The platform is divided into three isolated environments to ensure stability and controlled releases:
 
@@ -68,7 +68,7 @@ The platform is divided into three isolated environments to ensure stability and
 
 ## 4. Data Transformation Model
 
-A single Spark notebook is responsible for:
+A suite of modular Spark notebooks is responsible for:
 - Reading raw data from OneLake  
 - Applying all business transformations and calculations  
 - Writing curated datasets for analytical consumption  

@@ -19,15 +19,16 @@ To provide visibility into:
 ## 2. Metrics
 
 ### **Operational**
-- Pipeline run duration  
-- Number of failed runs  
-- Success/failure rate  
-- Notebook execution time  
+- **Pipeline Health:** Success/failure rate of the orchestration suite.
+
+- **Spark Performance:** Execution duration trends for PySpark notebooks.
+
+- **Refresh Latency:** Time taken to import Gold tables into the Semantic Model.
 
 ### **Data Quality**
-- Row count anomalies  
-- Missing date spikes  
-- Negative values in production/heating/emissions  
+- **Row Count Anomalies:** Comparison of Bronze vs. Gold record counts.
+
+- **Energy Metrics:** Out-of-bounds checks (e.g., negative production, unrealistic carbon intensity).
 
 ### **Semantic Model**
 - Refresh duration  

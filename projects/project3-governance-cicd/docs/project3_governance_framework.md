@@ -59,63 +59,77 @@ This governance framework ensures that:
 ---
 
 ## 4. Data Zones & Layering
-### Raw Zone
+### Raw Zone (Bronze)
 
-- Immutable datasets from ingestion (Dataflow Gen2)
-- Stored as Delta tables
-- No business logic applied
+- **Lakehouse Files:** Immutable datasets ingested from source systems.
 
-### Curated Zone
+- Native formats (CSV/Parquet) maintained for auditability.
 
-- Cleaned, validated tables
-- Join-ready star schemas
-- Version-controlled transformations
+### Curated Zone (Gold)
+
+- **Lakehouse Tables:** Cleaned, validated, and dimensionally modeled Delta tables.
+
+- Version-controlled transformations handled by PySpark.
 
 ### Semantic Layer
 
-- Reusable models across dashboards
-- Governed KPI definitions
-- RLS applied here (not in the raw zone)
+- **Import Mode Models:** High-performance models with governed KPI definitions.
+
+- **Security:** RLS and OLS applied at this layer to ensure data privacy.
 
 ---
 
 ## 5. Naming Standards
+To ensure scannability and governance, the following pattern is enforced:
+`<prefix>_<project>_<subject>_<grain>`
 
-```
-raw.FactEnergyProduction
-raw.DimDate
-curated.FactEnergyDaily
-model.EnergyAnalytics
-pipeline.ETL_Energy
-```
+- prefix – Type of table: `fact`, `dim`, `stg` (staging), etc.
 
-Consistent naming ensures:
-- Dependency discovery
-- Lineage clarity
-- Governance compliance
+- project – Project name (optional if schema implies project)
+
+- subject – What the table is about: `energy`, `heating`, `co2`, etc.
+
+- grain – Aggregation or granularity: `daily`, `monthly`, etc.
+
+**Example:**
+```
+fact_heating_emissions_daily
+fact_energy_analytics_kpi_daily
+dim_date
+dim_plant
+```
 
 ---
 
 ## 6. Security Model
-### Access
 
-- Raw Zone: restricted to engineering
-- Curated Zone: wider access but controlled
-- Semantic Layer: governed by RLS
+The platform implements a multi-layered security strategy to ensure the "Principle of Least Privilege" across the Medallion architecture.
 
-### Row-Level Security
+### 6.1 Data Access by Zone
 
-Examples:
+- **Raw Zone (Bronze):** Restricted exclusively to Data Engineering and Platform Admins to maintain data integrity.
 
-- Region-based filtering
-- Plant-based filtering
-- Role-based access using AD groups
+- **Curated Zone (Gold):** Accessible to Data Analysts for ad-hoc SQL discovery and cross-functional validation via the SQL Analytics Endpoint.
 
-### Sensitive Data
+- **Semantic Layer:** The primary entry point for business users, fully governed by Row-Level Security (RLS).
 
-- No personal data stored
-- Emission and operational data classified as confidential
-- Workspace-level protection applied
+### 6.2 Row-Level Security (RLS) Implementation
+
+Access is filtered dynamically based on the user's organizational role:
+
+- **Plant-Level Filtering:** Plant Managers only see operational data for their specific sites.
+
+- **Region-Level Filtering:** Regional Directors see aggregated metrics for their geographic area.
+
+- **Role-Based Access:** Managed via Active Directory (AD) groups for seamless onboarding and offboarding.
+
+### 6.3 Sensitive Data and Compliance
+
+- **Confidentiality:** Emissions and financial data are classified as confidential; **Object-Level Security (OLS)** is used to hide specific columns from unauthorized viewers.
+
+**Data Privacy:** No PII (Personally Identifiable Information) is stored within the Lakehouse.
+
+**Auditability:** All access to the Production workspace is logged via Fabric's audit logs to meet energy-sector regulatory standards.
 
 ---
 
@@ -195,12 +209,4 @@ Promotions to ```main``` use:
 
 ## 10. Summary
 
-This framework provides a hybrid approach combining:
-
-- Enterprise governance
-- Modern data product principles
-- Fabric-native workflows
-- CI/CD validation
-- Secure, scalable workspace architecture
-
-This framework represents how to think about/plan building real, scalable data platforms — practical, robust, and ready for future expansion.
+This framework represents a practical, robust approach to building scalable data platforms. By combining **Enterprise Governance** with **Modern Data Product principles**, we ensure the Energy Analytics Platform remains a "Single Source of Truth" that is both secure and agile
