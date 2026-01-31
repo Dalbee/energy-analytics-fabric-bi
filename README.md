@@ -1,6 +1,6 @@
 ﻿# Energy Analytics Fabric BI Platform
 
-This repository contains a set of three demonstration projects designed to showcase modern data engineering, reporting, and governance capabilities using Microsoft Fabric. The work is structured to represent the responsibilities of a Senior / Lead Analytics Engineer within a large energy company operating at scale.
+This repository contains a set of three projects designed to showcase modern data engineering, reporting, and governance capabilities using Microsoft Fabric. The work is structured to represent the responsibilities of a Senior / Lead Analytics Engineer within a large energy company operating at scale.
 
 The repository is organised into three primary projects:
 
