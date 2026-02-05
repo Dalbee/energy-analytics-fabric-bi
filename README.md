@@ -1,4 +1,10 @@
-﻿# Energy Analytics Fabric BI Platform
+﻿# District Energy Intelligence Platform
+
+**Role:** Lead Data Engineer & Strategic Data Analyst 
+
+**Tech Stack:** Microsoft Fabric, PySpark, OneLake, Power BI (DirectLake) 
+
+**Key Achievement:** Identified **81,744 MWh** in efficiency risk, translating to **€4.9M** in potential cost recovery.
 
 This repository contains a set of three projects that showcase modern data engineering, reporting, and governance capabilities using Microsoft Fabric. The work is structured to represent the responsibilities of a Senior / Lead Analytics Engineer within a large energy company operating at scale.
 
