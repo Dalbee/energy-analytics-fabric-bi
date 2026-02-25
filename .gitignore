@@ -1,3 +1,6 @@
+# Ignore specific dashboard/theme configuration files
+modern_dark_dashboard.json
+
 # Exclude Power BI binary files
 *.pbix
 *.pbit
