@@ -1,7 +1,11 @@
 ﻿# District Energy Intelligence Platform: From Silos to Strategic Assets
 
 **Role:** Lead Data Engineer & Strategic Data Analyst  
-**Tech Stack:** Microsoft Fabric (OneLake, PySpark, SQL Endpoint), Power BI (DirectQuery Mode (Prototype), Import Mode (Production), Star Schema)  
+
+**Tech Stack & Architectural Decision:** Microsoft Fabric (OneLake, PySpark, SQL Endpoint), Power BI (**DirectQuery Mode, Prototype, Import Mode Production**, Star Schema).  
+
+**Architectural Rationale:** The solution was initially prototyped in **DirectQuery** to evaluate the potential for real-time telemetry streaming from Microsoft Fabric. However, for the final production suite, I made the strategic decision to migrate to **Import Mode**. This transition was executed to leverage the **VertiPaq in-memory engine**, ensuring sub-second interactivity and high-concurrency performance for complex ESG and financial DAX measures that require maximum computational efficiency.
+
 **Core Impact:** Unified siloed telemetry to recover **€4.9M** in avoidable efficiency costs.
 
 **[🔗 View Live Power BI Dashboard](https://app.powerbi.com/view?r=eyJrIjoiMjhjM2Y3MzUtOThjYS00ZjBiLWEwMDEtMTc0MjAxNGJjMWYxIiwidCI6Ijk1N2VlNTFkLWZkOTktNGNjZC1iOGUxLTZlMDE0MjE3NzM3ZiIsImMiOjh9)**
