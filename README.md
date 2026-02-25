@@ -40,9 +40,15 @@ The project is divided into three specialized workstreams/projects to demonstrat
 ### [Project 1: Energy BI & Analytics Solution - _Analytics & Semantic Modeling_](./projects/project1-energy-bi/README.md)
 * **Design:** Implemented a robust **Star Schema** to handle 100M+ rows of sensor data.
 * **Innovation:** Utilized **Calculation Groups** for dynamic "Actual vs. Budget" energy comparisons.
-* **Key Visual:** 
-![Power BI Dashboard](./projects/project1-energy-bi/screenshots/06_energy_operational_efficiency_and_risk_signals_report.png)
-![Model Diagram](./projects/project1-energy-bi/screenshots/01_project1_model_view_relationships.png)
+* **Key Visuals:** 
+    ![Power BI Dashboard](./projects/project1-energy-bi/screenshots/06_energy_operational_efficiency_and_risk_signals_report.png)
+
+    ![Star Schema DirectQuery Mode - Prototype](./projects/project1-energy-bi/screenshots/01_project1_model_view_relationships_direct_query_mode.png)
+    *Star Schema: DirectQuery Mode Prototype*
+
+
+    ![Star Schema Import Mode - Production](./projects/project1-energy-bi/screenshots/01_project1_model_view_relationships_import_mode.png)
+    *Star Schema: Final Production Import Mode*
 > **Executive Summary:** An end-to-end Microsoft Fabric solution that refactors siloed plant operations data into strategic assets, translating technical grid waste into actionable financial insights and ESG leadership metrics.
 
 ### [Project 2: End-to-End Fabric Data Pipeline & Automation - _Data Engineering & Medallion Pipelines_](./projects/project2-fabric-pipeline/README.md)
