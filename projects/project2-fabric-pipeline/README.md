@@ -15,7 +15,7 @@ The purpose of this project is to unify disparate energy streams (production, he
 ---
 
 ## 2. Architecture Overview
-The solution follows a modern **Microsoft Fabric Lakehouse architecture**:
+The solution follows a modern **Microsoft Fabric Medallion Architecture**:
 
 * **Files (Bronze):** Raw CSV/API telemetry stored in OneLake.
 * **Tables (Silver):** Cleaned and standardized Delta tables.
@@ -34,7 +34,7 @@ flowchart TD
 
 ## 3. Key Artifacts
 
-The following components form the backbone of the engineering solution, ensuring a clear separation between raw ingestion, transformation logic, and quality assurance.
+The following components form the backbone of the engineering solution, ensuring a clear separation between raw ingestion, transformation logic, and quality assurance. *The PySpark notebook handles the promotion from Bronze to Gold.*
 
 | Component               | Name / Location                               | Role                                      |
 | ----------------------- | --------------------------------------------- | ----------------------------------------- |
@@ -123,7 +123,7 @@ The Fabric Pipeline (`pl_energy_analytics_ingestion`) orchestrates the workflow 
 This engineering backbone enables the high-impact analytics seen in Project 1 by providing:
 
 * **Clean Semantic Modeling:** Reduced need for complex DAX "calculate" statements.
-* **DirectLake Readiness:** Optimized Delta tables for sub-second report interactivity.
+* **DirectLake Readiness:** Optimized Delta tables for sub-second report interactivity. *The engineering layer supports a flexible semantic strategy; while the production report utilizes **Import Mode** for executive performance, the Delta tables are optimized for **DirectQuery/Direct Lake** evaluation for real-time monitoring use cases.* 
 * **Auditability:** Full end-to-end lineage from the raw telemetry CSV to the final Euro (€) recovery visual.
 
 ---

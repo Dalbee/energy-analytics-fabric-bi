@@ -52,38 +52,69 @@ The semantic model follows a strictly governed star schema to ensure sub-second 
 
 
 ### Fact Tables
-- **FactEnergyProduction:** Granular telemetry from plant sensors.
-- **FactDistrictHeating:** Metered demand vs. grid supply.
-- **FactCO2Emissions:** Calculated intensity based on fuel type and throughput.
+- **factenergydaily**: Granular production telemetry including `mwh_produced` and `plant_id`.
+- **factheatingdaily**: Metered demand vs. grid supply capturing `heating_consumed_mwh`.
+- **factco2daily**: Calculated intensity metrics (`co2_kg`) based on throughput.
+- **fact_energy_kpi_daily**: Pre-aggregated efficiency metrics (`capacity_utilization_pct`) for rapid executive summaries.
+- **fact_heating_emissions_daily**: Sustainability tracking for heat-specific carbon footprints.
 
 ### Dimension Tables
-- **DimDate:** Supporting complex Time-Intelligence (MoM, YoY, "Surplus Days").
-- **DimPlant:** Metadata including location, capacity, and HSEQ status.
-- **DimEnergySource:** Categorization for Renewable vs. Non-Renewable analysis.
+- **dimdate**: Supporting complex Time-Intelligence (MoM, YoY, "Surplus Days").
+- **dimplant**: Master data containing `installed_capacity_mw`, `commissioning_year`, and location metadata.
 
 ---
 
-## 4. Data Flow Architecture
+## 4. Data Flow & Storage Mode Strategy
 
-The end-to-end flow leverages the Microsoft Fabric ecosystem, moving from raw ingestion to high-performance reporting.
+The architecture leverages a hybrid prototyping approach within the Microsoft Fabric ecosystem to determine the optimal balance between data freshness and analytical performance.
 
 ```mermaid
-flowchart LR
+flowchart TD
+    subgraph Source_Layer [Source & Ingestion]
     A[Raw Data: CSV / API] --> B[OneLake: Lakehouse Files]
+    end
+
+    subgraph Transformation_Layer [Fabric Engineering]
     B --> C[PySpark Transformations]
-    C --> D[Lakehouse Curated Tables]
-    D --> E[Power BI Semantic Model: Import Mode]
-    E --> F[Energy Dashboard]
+    C --> D[Lakehouse Gold Tables]
+    end
+
+    subgraph Architecture_Decision [Architectural Evaluation]
+    D -.-> E1[Prototype: DirectQuery / Direct Lake]
+    D --> E2[Final: Power BI Import Mode]
+    
+    E1 -- "Evaluation: Latency & DAX Complexity" --> E2
+    end
+
+    subgraph Presentation_Layer [Decision Support]
+    E2 --> F[Executive Dashboards]
+    end
+
+    style E1 fill:#f9f,stroke:#333,stroke-dasharray: 5 5
+    style E2 fill:#0072C6,stroke:#333,color:#fff,stroke-width:2px
 ```
 
+### Why Import Mode?
+While a **DirectQuery** version of the model was fully developed and validated to explore real-time potential, **Import Mode** was selected for the final production release to provide:
+
+* **Sub-second Interactivity:** Utilizing the VertiPaq engine for instantaneous cross-filtering across 2.0M+ rows of telemetry.
+* **DAX Optimization:** Supporting high-complexity calculations for predictive safety margins without source-system latency.
+* **Resource Efficiency:** Optimizing Fabric capacity costs by decoupling visual consumption from live compute cycles.
+
+
+**![Star Schema DirectQuery Mode](./screenshots/01_project1_model_view_relationships_direct_query_mode.png)**
+*Star Schema: DirectQuery Mode Prototype*
+
+
+**![Star Schema Import Mode](./screenshots/01_project1_model_view_relationships_import_mode.png)**
+*Star Schema: Final Production Import Mode*
 
 ---
 
-## 5. Transformation Strategy
-
+### 5. Transformation Strategy
 Fabric transformations follow a layered, scalable, and code-first pattern:
 
-* **PySpark Engineering:** All business logic, standardization, and cleansing (e.g., Degree-Day Normalization) are implemented in Spark notebooks to handle high-volume energy datasets.
+* **PySpark Engineering:** All business logic and cleansing (e.g., Degree-Day Normalization) are implemented in Spark notebooks to handle high-volume energy datasets.
 * **KPI Ingestion:** Business KPIs are computed upstream in Spark to ensure they are available to any tool consuming the Lakehouse.
 * **Delta Lake Persistence:** Transformation outputs are written to the Gold layer in Delta format for ACID compliance.
 * **Validation Gates:** Automated quality checks run within the pipeline to ensure data consistency before the reporting layer refreshes.
@@ -95,7 +126,7 @@ Fabric transformations follow a layered, scalable, and code-first pattern:
 The semantic layer standardises how business metrics are defined and consumed:
 
 * **Import Mode:** Utilizes the VertiPaq engine for sub-second visual interactivity and high-performance analytical queries.
-* **Unified Measure Library:** Centralized DAX measures ensure KPI consistency across all report pages.
+* **Unified Measure Library:** Centralized DAX measures (e.g., `Avg Capacity Utilization %`, `Heat Balance (MWh)`) ensure KPI consistency.
 * **Calculation Groups:** Implemented to allow users to toggle the entire report between **MWh**, **GJ**, and **Financial (€)** views dynamically.
 * **Security:** **Row-Level Security (RLS)** restricts access to sensitive plant data based on user roles and geographic responsibility.
 
@@ -130,7 +161,7 @@ It is tailored for enterprises requiring high availability and consistent KPIs a
 
 ---
 
-## Summary Outcomes
+## 10. Summary Outcomes
 * **€4.9M** identified in avoidable efficiency costs.
 * **100% Compliance** with ESG carbon intensity targets.
 * **Zero Heat Deficit** maintained through predictive reliability monitoring.

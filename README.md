@@ -1,9 +1,8 @@
 ﻿# District Energy Intelligence Platform: From Silos to Strategic Assets
 
 **Role:** Lead Data Engineer & Strategic Data Analyst  
-**Tech Stack:** Microsoft Fabric (OneLake, PySpark, SQL Endpoint), Power BI (DirectLake)  
+**Tech Stack:** Microsoft Fabric (OneLake, PySpark, SQL Endpoint), Power BI (DirectQuery Mode (Prototype), Import Mode (Production), Star Schema)  
 **Core Impact:** Unified siloed telemetry to recover **€4.9M** in avoidable efficiency costs.
-
 
 **[🔗 View Live Power BI Dashboard](https://app.powerbi.com/view?r=eyJrIjoiMjhjM2Y3MzUtOThjYS00ZjBiLWEwMDEtMTc0MjAxNGJjMWYxIiwidCI6Ijk1N2VlNTFkLWZkOTktNGNjZC1iOGUxLTZlMDE0MjE3NzM3ZiIsImMiOjh9)**
 
@@ -41,7 +40,7 @@ The project is divided into three specialized workstreams/projects to demonstrat
 ### [Project 1: Energy BI & Analytics Solution - _Analytics & Semantic Modeling_](./projects/project1-energy-bi/README.md)
 * **Design:** Implemented a robust **Star Schema** to handle 100M+ rows of sensor data.
 * **Innovation:** Utilized **Calculation Groups** for dynamic "Actual vs. Budget" energy comparisons.
-* **Visual:** 
+* **Key Visual:** 
 ![Power BI Dashboard](./projects/project1-energy-bi/screenshots/06_energy_operational_efficiency_and_risk_signals_report.png)
 ![Model Diagram](./projects/project1-energy-bi/screenshots/01_project1_model_view_relationships.png)
 > **Executive Summary:** An end-to-end Microsoft Fabric solution that refactors siloed plant operations data into strategic assets, translating technical grid waste into actionable financial insights and ESG leadership metrics.
@@ -49,7 +48,7 @@ The project is divided into three specialized workstreams/projects to demonstrat
 ### [Project 2: End-to-End Fabric Data Pipeline & Automation - _Data Engineering & Medallion Pipelines_](./projects/project2-fabric-pipeline/README.md)
 * **Architecture:** Multi-layered **Medallion (Bronze/Silver/Gold)** architecture in OneLake.
 * **Transformation:** Used **PySpark** for complex energy unit conversions and  validation logic.
-* **Visual:** 
+* **Key Visuals:** 
 ![Architecure Diagrams](./projects/project2-fabric-pipeline/docs/screenshots/data_flow_architecture.png)
 
 ![Architecure Diagrams](./projects/project2-fabric-pipeline/docs/screenshots/02_energy_kpi_notebook.png)
@@ -63,6 +62,32 @@ The project is divided into three specialized workstreams/projects to demonstrat
 ### [Project 3: Fabric Governance, Security and CI/CD Framework - _Governance & Enterprise Security_](./projects/project3-governance-cicd/docs/project3_governance_framework.md)
 * **Security:** Defined **Row-Level Security (RLS)** to ensure plant managers only see their specific telemetry.
 * **DevOps:** Established a CI/CD workflow using **Fabric Deployment Pipelines** and GitHub integration.
+
+---
+
+## 🛠️ Technology Stack
+
+- **Storage:** Microsoft Fabric OneLake & Lakehouse (Delta Lake format).
+
+- **Compute:** Spark (PySpark Notebooks) & SQL Analytics Endpoints.
+
+- **Orchestration:** Fabric Data Pipelines.
+
+- **Reporting:** Power BI (**Import Mode** for performance, Star Schema architecture).
+
+- **DevOps:** GitHub Repository Integration & Fabric Deployment Pipelines.
+
+---
+
+## 🎯 Key Objectives
+
+- **Scalability:** Design a platform capable of handling millions of rows of operational energy data.
+
+- **Single Source of Truth:** Compute complex KPIs upstream in Spark to ensure consistency across all downstream tools.
+
+- **Governance:** Implement a "Least Privilege" security model and a structured release process.
+
+- **Performance:** Balance the heavy lifting of Spark with the lightning-fast interactivity of Power BI.
 
 ---
 
@@ -80,33 +105,6 @@ energy-analytics-fabric-bi/
 
 
 Together, these projects demonstrate a complete, production-aligned Fabric ecosystem including ingestion, transformation, modelling, reporting, governance, operations, and deployment automation.
-
----
-
-## 🎯 Key Objectives
-
-- **Scalability:** Design a platform capable of handling millions of rows of operational energy data.
-
-- **Single Source of Truth:** Compute complex KPIs upstream in Spark to ensure consistency across all downstream tools.
-
-- **Governance:** Implement a "Least Privilege" security model and a structured release process.
-
-- **Performance:** Balance the heavy lifting of Spark with the lightning-fast interactivity of Power BI.
-
----
-
-## 🛠️ Technology Stack
-
-- **Storage:** Microsoft Fabric OneLake & Lakehouse (Delta Lake format).
-
-- **Compute:** Spark (PySpark Notebooks) & SQL Analytics Endpoints.
-
-- **Orchestration:** Fabric Data Pipelines.
-
-- **Reporting:** Power BI (Import Mode, DAX, Calculation Groups).
-
-- **DevOps:** GitHub Repository Integration & Fabric Deployment Pipelines.
-
 
 ---
 
