@@ -1,228 +1,134 @@
 # Project 2 — Microsoft Fabric Data Engineering Pipeline
 
-This project implements an end-to-end **data engineering workflow using Microsoft Fabric**, covering Lakehouse-based ingestion, PySpark transformations, dimensional modeling, data quality validation, and pipeline orchestration.
+**Role:** Lead Data Engineer  
+**Core Deliverable:** End-to-end Medallion Architecture transforming raw telemetry into €4.9M of actionable financial insights.
 
-The project demonstrates how a Fabric-based data platform can be structured to support reliable analytics and reporting in an energy-sector context, with all business KPIs computed upstream in Spark.
+This project implements a robust **data engineering workflow using Microsoft Fabric**, covering Lakehouse-based ingestion, PySpark transformations, dimensional modeling, and automated quality gates.
 
 ---
 
 ## 1. Purpose
+The purpose of this project is to unify disparate energy streams (production, heating, emissions) into a **Single Source of Truth**. By computing complex KPIs upstream in Spark, we ensure that the **€4,904,640 in avoidable costs** identified at the Tampere plant is calculated using a single, governed logic accessible to all downstream stakeholders.
 
-The purpose of this project is to:
 
-- Ingest operational energy datasets (production, district heating, CO₂ emissions)
-- Store source data in a Microsoft Fabric Lakehouse
-- Transform raw data into curated, analysis-ready Delta tables
-- Apply a dimensional (star-schema-oriented) data model
-- Compute business KPIs upstream in PySpark
-- Orchestrate transformations and validation using Fabric Pipelines
-- Prepare clean, reliable data for Power BI semantic models (Project 1)
-
-This reflects enterprise-grade data engineering practices expected for a **senior / Tech Lead–level role**.
 
 ---
 
 ## 2. Architecture Overview
-
 The solution follows a modern **Microsoft Fabric Lakehouse architecture**:
 
-- CSV source files stored in Lakehouse Files
-- Delta tables created and managed in the Lakehouse
-- PySpark notebooks for transformation and KPI computation
-- A validation notebook enforcing data quality checks
-- A Fabric Pipeline orchestrating notebook execution
-- Power BI semantic models consuming curated tables (Project 1)
-
-### High-Level Architecture
+* **Files (Bronze):** Raw CSV/API telemetry stored in OneLake.
+* **Tables (Silver):** Cleaned and standardized Delta tables.
+* **Tables (Gold):** Curated Star Schema enriched with business-critical KPIs.
 
 ```mermaid
 flowchart TD
-    A[CSV Source Files] --> B[Lakehouse Files]
-    B --> C[Transformation Notebook]
-    C --> D[Curated Delta Tables]
-    D --> E[Validation Notebook]
+    A[CSV Source Files] --> B[Lakehouse Files: Bronze]
+    B --> C[PySpark Transformation Notebook]
+    C --> D[Curated Delta Tables: Gold]
+    D --> E[Validation Notebook: Quality Gate]
     E --> F[Power BI Semantic Model]
 ```
+
 ---
 
 ## 3. Key Artifacts
-| Component               | Name / Location                          |
-| ----------------------- | ---------------------------------------- |
-| Lakehouse               | `lh_energy_analytics`                    |
-| Transformation notebook | `notebooks/transform_energy_data.py`     |
-| Validation notebook     | Executed via Fabric Pipeline             |
-| Fabric pipeline         | `pl_energy_analytics_ingestion`          |
-| Pipeline definition     | `pipelines/etl_energy_pipeline.json`     |
-| Curated tables          | Lakehouse curated layer                  |
-| Architecture docs       | `docs/project2_pipeline_architecture.md` |
 
+The following components form the backbone of the engineering solution, ensuring a clear separation between raw ingestion, transformation logic, and quality assurance.
+
+| Component               | Name / Location                               | Role                                      |
+| ----------------------- | --------------------------------------------- | ----------------------------------------- |
+| **Lakehouse** | `lh_energy_analytics`                         | Unified storage for Bronze/Silver/Gold layers. |
+| **Transformation Notebook** | `notebooks/transform_energy_data.py`      | PySpark logic for KPI and Star Schema creation. |
+| **Validation Notebook** | `notebooks/validate_curated_data.py`          | Quality gate for row counts and schema integrity. |
+| **Fabric Pipeline** | `pl_energy_analytics_ingestion`               | Orchestrator for end-to-end execution.     |
+| **Pipeline Definition** | `pipelines/etl_energy_pipeline.json`          | JSON export for CI/CD and Git integration. |
+| **Architecture Docs** | `docs/project2_pipeline_architecture.md`      | Detailed technical specifications.         |
+
+---
 
 ---
 
 ## 4. Data Model (Curated Layer)
 
-The curated layer follows a **star-schema-inspired design** suitable for analytics and reporting.
+The curated layer implements a **Star Schema** optimized for high-performance analytical queries. By computing efficiency and risk metrics at the model level, we ensure a "Single Source of Truth" for the **€4.9M recovery narrative**.
+
+
 
 ### Dimension Tables
-
-#### **dimdate**
-- date  
-- year  
-- quarter  
-- month  
-- day  
-- day_of_week  
-
-#### **dimplant**
-- plant_id  
-- plant_name  
-- energy_source  
-- installed_capacity_mw  
-- commissioning_year  
-
-The `dimplant` dimension is enriched using reference capacity data to enable capacity, utilization, and sustainability KPIs.
+* **dimdate:** Enables Time-Intelligence for MoM trends and seasonal "Surplus Day" tracking.
+    * *Schema: date, year, quarter, month, day, day_of_week*
+* **dimplant:** Enriched with HSEQ metadata and capacity data to drive utilization KPIs.
+    * *Schema: plant_id, plant_name, energy_source, installed_capacity_mw, commissioning_year*
 
 ---
 
-### Fact Tables
+### Fact Tables (The "Engine" of the Insights)
+Fact tables are partitioned by domain to handle high-volume telemetry while delivering granular strategic insights:
 
-#### **factenergydaily**
-- date  
-- plant_id  
-- mwh_produced  
-
-#### **factheatingdaily**
-- date  
-- plant_id  
-- heating_produced_mwh  
-- heating_consumed_mwh  
-
-#### **factco2daily**
-- date  
-- plant_id  
-- co2_kg  
-
-#### **fact_energy_kpi_daily**
-
-- Production metrics enriched with capacity and renewable attributes
-
-#### **fact_heating_kpi_daily**
-
-- Heating balance and operational KPIs
-
-#### **fact_heating_emissions_daily**
-- date  
-- plant_id  
-- heating_produced_mwh  
-- co2_kg  
-- co2_kg_per_mwh_heat  
-
-All fact tables join to `dimdate` and `dimplant` to support time-based, asset-based, and sustainability analysis.
+| Table Name | Primary Metrics | Strategic Value |
+| :--- | :--- | :--- |
+| **factenergydaily** | `mwh_produced` | Tracks raw electricity output across the fleet. |
+| **factheatingdaily** | `heating_produced`, `consumed` | Computes the daily heat balance for grid reliability. |
+| **factco2daily** | `co2_kg` | Direct sensor-level tracking of carbon footprint. |
+| **fact_energy_kpi_daily** | Capacity Utilization % | Identifies the **23.41M MWh** of untapped scaling potential. |
+| **fact_heating_kpi_daily** | Operational Stability | Confirmed the **zero-MWh heat deficit** across all plants. |
+| **fact_heating_emissions_daily** | `co2_kg_per_mwh_heat` | Pinpointed the **0.24 kg/MWh** outlier at the Oulu Plant. |
 
 ---
 
 ## 5. Transformation Logic (PySpark)
 
-All transformations are implemented in **PySpark** within the transformation notebook.
+All business logic is implemented in **PySpark** notebooks, prioritizing scalability and code-first maintenance.
 
-The transformation logic is responsible for:
-
-- Standardising data types (dates, numeric fields)
-- Creating authoritative dimension tables
-- Enriching `dimplant` with installed capacity and commissioning year
-- Joining fact and dimension data
-- Computing business KPIs upstream in Spark
-- Writing curated Delta tables to the Lakehouse
-
-Transformations are designed to be:
-
-- Deterministic  
-- Idempotent  
-- Safe to execute repeatedly within a Fabric Pipeline  
+* **Standardization:** Normalizing disparate sensor telemetry into standardized units (MWh and GJ).
+* **Enrichment:** Joining raw production data with plant capacity dimensions to compute real-time utilization.
+* **Idempotency:** Notebooks are designed to be safe for re-execution, ensuring that a pipeline retry does not result in duplicate or corrupted data.
+* **Performance:** Leveraging Delta Lake features (Z-Order, V-Order) to optimize query speed for Project 1's dashboards.
 
 ---
 
 ## 6. Business KPIs Computed in Spark
 
-All major business KPIs are computed **upstream in Spark**, minimizing the need for complex DAX in Power BI.
+To maintain high performance in Power BI and ensure logic consistency, all complex KPIs are computed **upstream in Spark**:
 
-### Electricity KPIs
+### Electricity & Grid KPIs
+* **Theoretical Maximum MWh:** `installed_capacity_mw × 24`
+* **Unused Capacity:** Identification of the **23.41M MWh** idle capacity in Southern plants.
+* **Renewable Energy %:** Dynamic attribution of fuel types to total production.
 
-- Theoretical maximum MWh per day  
-  (`installed_capacity_mw × 24`)
-- Load factor  
-- Capacity utilization percentage  
-- Unused capacity (MWh)  
-- Renewable vs non-renewable energy production  
-- Renewable energy percentage  
-
----
-
-### District Heating KPIs
-
-- Heating produced vs consumed  
-- Heating balance (loss / surplus)  
+### Sustainability & Financial KPIs
+* **CO₂ Intensity:** `kg CO₂ / MWh` calculated at the asset level (identifying Oulu as the 0.24 kg/MWh outlier).
+* **Avoidable Cost (€):** Application of financial multipliers to the **81,744 MWh** of recorded efficiency risk.
 
 ---
 
-### CO₂ & Sustainability KPIs
+## 7. Pipeline Design & Validation Strategy
 
-- Plant-level CO₂ emissions  
-- CO₂ intensity per MWh of heat (`kg CO₂ / MWh`)  
-- Renewable energy attribution  
+The Fabric Pipeline (`pl_energy_analytics_ingestion`) orchestrates the workflow and enforces **Quality Gates** to protect downstream reporting.
 
-These KPIs enable sustainability and efficiency reporting without complex downstream calculations.
 
----
 
-## 7. Pipeline Design
-
-The Fabric Pipeline (`pl_energy_analytics_ingestion`) orchestrates the data engineering workflow.
-
-### Pipeline Activities
-
-1. **Transform energy data**
-   - Executes the PySpark transformation notebook
-   - Creates and updates curated Delta tables
-   - Applies controlled schema evolution
-
-2. **Validate curated tables**
-   - Confirms all curated tables exist
-   - Verifies row counts are greater than zero
-   - Acts as a quality gate before analytics consumption
-
-This design enforces a clean separation between transformation logic and validation logic.
-
-_**The pipeline specification is documented in ```pipeline_spec.yaml``` as an architectural reference and is not executed directly.**_
+### Pipeline Activities:
+1.  **Transformation:** Executes PySpark logic to refresh the Gold layer.
+2.  **Validation Gate:** A dedicated notebook that verifies:
+    * **Table Existence:** Ensures all 6 curated tables are present.
+    * **Non-Zero Checks:** Confirms that data volume meets expected thresholds (preventing "Empty Dashboard" scenarios).
+    * **Logic Sanity:** Flags a failure if the efficiency risk exceeds the 5,000 MWh max allowable waste line.
 
 ---
 
-## 8. Validation Strategy
+## 8. Integration with Power BI (Project 1)
 
-A dedicated validation notebook enforces lightweight but effective data quality checks:
+This engineering backbone enables the high-impact analytics seen in Project 1 by providing:
 
-- Table existence validation  
-- Non-empty dataset checks  
-- Pipeline failure on validation errors  
-
-Validation is executed as part of the Fabric Pipeline, preventing incomplete or corrupted data from reaching analytics consumers.
+* **Clean Semantic Modeling:** Reduced need for complex DAX "calculate" statements.
+* **DirectLake Readiness:** Optimized Delta tables for sub-second report interactivity.
+* **Auditability:** Full end-to-end lineage from the raw telemetry CSV to the final Euro (€) recovery visual.
 
 ---
 
-## 9. Integration with Power BI
-
-The curated Delta tables produced by this project are consumed by Power BI semantic models implemented in **Project 1**.
-
-This project provides the **data engineering foundation** that supports:
-
-- Clean semantic modeling  
-- Simplified DAX  
-- Reliable dashboard refreshes  
-- Scalable analytics development  
-
----
-
-## 10. What This Project Demonstrates
+## 9. What This Project Demonstrates
 
 - Microsoft Fabric Lakehouse design  
 - PySpark-based data transformations  
@@ -234,7 +140,7 @@ This project provides the **data engineering foundation** that supports:
 
 ---
 
-## 11. Status
+## 10. Status
 
 **Project status:** Complete
 
@@ -246,4 +152,9 @@ This project represents the **data engineering backbone** of the overall Energy 
 - **Project 1** — Power BI semantic modeling & dashboards  
 - **Project 3** — Governance and CI/CD strategy
 
+---
+## 🧭 Navigation
+- **[View Project 1: Energy BI & Analytics Solution](../../projects/project1-energy-bi/README.md)** 
+- **[View Project 3: Fabric Governance, Security and CI/CD Framework](../project3-governance-cicd/docs/project3_governance_framework.md)**
+- **[Back to Portfolio Home](../../README.md)**
 

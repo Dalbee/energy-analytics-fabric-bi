@@ -1,0 +1,7 @@
+# Exclude Power BI binary files
+*.pbix
+*.pbit
+
+# Optional: Exclude local user settings
+*.pbiuser
+*.pbiproj.user

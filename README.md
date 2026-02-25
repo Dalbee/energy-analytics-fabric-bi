@@ -1,20 +1,83 @@
-﻿# District Energy Intelligence Platform
+﻿# District Energy Intelligence Platform: From Silos to Strategic Assets
 
-**Role:** Lead Data Engineer & Strategic Data Analyst 
+**Role:** Lead Data Engineer & Strategic Data Analyst  
+**Tech Stack:** Microsoft Fabric (OneLake, PySpark, SQL Endpoint), Power BI (DirectLake)  
+**Core Impact:** Unified siloed telemetry to recover **€4.9M** in avoidable efficiency costs.
 
-**Tech Stack:** Microsoft Fabric, PySpark, OneLake, Power BI (DirectLake) 
 
-**Key Achievement:** Identified **81,744 MWh** in efficiency risk, translating to **€4.9M** in potential cost recovery.
+**[🔗 View Live Power BI Dashboard](https://app.powerbi.com/view?r=eyJrIjoiMjhjM2Y3MzUtOThjYS00ZjBiLWEwMDEtMTc0MjAxNGJjMWYxIiwidCI6Ijk1N2VlNTFkLWZkOTktNGNjZC1iOGUxLTZlMDE0MjE3NzM3ZiIsImMiOjh9)**
 
-This repository contains a set of three projects that showcase modern data engineering, reporting, and governance capabilities using Microsoft Fabric. The work is structured to represent the responsibilities of a Senior / Lead Analytics Engineer within a large energy company operating at scale.
+---
 
-The repository is organised into three primary projects:
+## 🎯 The Vision: Bridging the Gap Between Waste & Finance
 
-1. **[Project 1: Energy BI & Analytics Solution](./projects/project1-energy-bi/README.md)**
+In the modern energy sector, data is often trapped in operational silos—telemetry, emissions tracking, and grid consumption exist in isolation. This platform was engineered within **Microsoft Fabric** to unify these streams into a **Single Source of Truth**, enabling data-driven decisions across three critical pillars:
 
-2. **[Project 2: End-to-End Fabric Data Pipeline & Automation](./projects/project2-fabric-pipeline/README.md)**
+* **Operational Excellence:** Optimizing plant load factors to reclaim **23.41M MWh** of unused capacity.
+* **ESG Leadership:** Real-time tracking of carbon intensity, maintaining a fleet average of **0.05 kg/MWh** (Target: 0.10).
+* **Grid Resilience:** Monitoring heat balance to sustain a **102.59% self-sufficiency** rating.
 
-3. **[Project 3: Fabric Governance, Security and CI/CD Framework](./projects/project3-governance-cicd/docs/project3_governance_framework.md)**
+
+
+---
+
+## 💰 Key Outcome: Financial & Operational Impact
+
+By unifying disparate datasets, I identified critical operational risks that were previously buried in siloed telemetry:
+
+| Metric | Result | Strategic Insight |
+| :--- | :--- | :--- |
+| **Efficiency Risk** | 81,744 MWh | Identified recorded excess waste across the fleet. |
+| **Financial Impact** | **€4,904,640** | Translated technical waste into a recovery narrative. |
+| **Primary Driver** | Tampere Plant | Pinpointed Nuclear production as the leading risk contributor. |
+| **Fleet Utilization** | 13.2% | Highlighted massive scaling opportunity without further CAPEX. |
+
+---
+
+## 🏗️ Technical Implementation (The "How")
+
+The project is divided into three specialized workstreams/projects to demonstrate full-stack Fabric proficiency:
+
+### [Project 1: Energy BI & Analytics Solution - _Analytics & Semantic Modeling_](./projects/project1-energy-bi/README.md)
+* **Design:** Implemented a robust **Star Schema** to handle 100M+ rows of sensor data.
+* **Innovation:** Utilized **Calculation Groups** for dynamic "Actual vs. Budget" energy comparisons.
+* **Visual:** 
+![Power BI Dashboard](./projects/project1-energy-bi/screenshots/06_energy_operational_efficiency_and_risk_signals_report.png)
+![Model Diagram](./projects/project1-energy-bi/screenshots/01_project1_model_view_relationships.png)
+> **Executive Summary:** An end-to-end Microsoft Fabric solution that refactors siloed plant operations data into strategic assets, translating technical grid waste into actionable financial insights and ESG leadership metrics.
+
+### [Project 2: End-to-End Fabric Data Pipeline & Automation - _Data Engineering & Medallion Pipelines_](./projects/project2-fabric-pipeline/README.md)
+* **Architecture:** Multi-layered **Medallion (Bronze/Silver/Gold)** architecture in OneLake.
+* **Transformation:** Used **PySpark** for complex energy unit conversions and  validation logic.
+* **Visual:** 
+![Architecure Diagrams](./projects/project2-fabric-pipeline/docs/screenshots/data_flow_architecture.png)
+
+![Architecure Diagrams](./projects/project2-fabric-pipeline/docs/screenshots/02_energy_kpi_notebook.png)
+
+![Architecure Diagrams](./projects/project2-fabric-pipeline/docs/screenshots/03_heating_co2_kpi_notebook.png)
+
+**Validation Logic:**
+![Architecure Diagrams](./projects/project2-fabric-pipeline/docs/screenshots/05_pipeline_validation_success.png)
+
+
+### [Project 3: Fabric Governance, Security and CI/CD Framework - _Governance & Enterprise Security_](./projects/project3-governance-cicd/docs/project3_governance_framework.md)
+* **Security:** Defined **Row-Level Security (RLS)** to ensure plant managers only see their specific telemetry.
+* **DevOps:** Established a CI/CD workflow using **Fabric Deployment Pipelines** and GitHub integration.
+
+---
+
+## 📁 Repository Structure
+
+```text
+energy-analytics-fabric-bi/
+├── docs/                      # Global Architecture & Governance Blueprints
+├── projects/
+│   ├── project1-energy-bi/    # PBIX metadata, DAX measures, Theme files
+│   ├── project2-engineering/  # PySpark Notebooks, Pipeline JSON definitions
+│   └── project3-governance/   # CI/CD configs & RLS security documentation
+└── README.md                  # Portfolio Home Page
+```
+
 
 Together, these projects demonstrate a complete, production-aligned Fabric ecosystem including ingestion, transformation, modelling, reporting, governance, operations, and deployment automation.
 
@@ -43,21 +106,6 @@ Together, these projects demonstrate a complete, production-aligned Fabric ecosy
 - **Reporting:** Power BI (Import Mode, DAX, Calculation Groups).
 
 - **DevOps:** GitHub Repository Integration & Fabric Deployment Pipelines.
-
-
----
-
-## 📁 Repository Structure
-
-```
-energy-analytics-fabric-bi/
-├── docs/                      # Global Architecture & Governance Blueprints
-├── projects/
-│   ├── project1-energy-bi/    # BI Artifacts (PBIX, Semantic Model metadata)
-│   ├── project2-engineering/  # PySpark Notebooks & Pipeline JSONs
-│   └── project3-governance-cicd/   # CI/CD configs & Security documentation
-└── README.md                  # Portfolio Home Page
-```
 
 
 ---
