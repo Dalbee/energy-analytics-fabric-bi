@@ -8,7 +8,7 @@
 
 **Core Impact:** Unified siloed telemetry to recover **€4.9M** in avoidable efficiency costs.
 
-**[🔗 View Live Power BI Dashboard](https://app.powerbi.com/view?r=eyJrIjoiMjhjM2Y3MzUtOThjYS00ZjBiLWEwMDEtMTc0MjAxNGJjMWYxIiwidCI6Ijk1N2VlNTFkLWZkOTktNGNjZC1iOGUxLTZlMDE0MjE3NzM3ZiIsImMiOjh9)**
+**[🔗 View Live Power BI Dashboard](https://app.powerbi.com/view?r=eyJrIjoiMWNiYmQyNzItMWQ4Ni00YjRhLTgzYjgtMjE0MzY5YjczNzYxIiwidCI6Ijk1N2VlNTFkLWZkOTktNGNjZC1iOGUxLTZlMDE0MjE3NzM3ZiIsImMiOjh9)**
 
 ---
 
